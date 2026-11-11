@@ -1,0 +1,88 @@
+{
+  "run_name": "cardio_llmcd",
+  "dataset": "cardio",
+  "random_state": 42,
+  "data": {
+    "table_path": null,
+    "target_idx": 11
+  },
+  "features": [
+    {
+      "index": 0,
+      "name": "age_group",
+      "description": "Cardiovascular dataset variable: patient age derived from the original age-in-days field. In this repository it is represented as a processed or binned numeric feature."
+    },
+    {
+      "index": 1,
+      "name": "gender",
+      "description": "Cardiovascular dataset variable: patient gender category, encoded numerically."
+    },
+    {
+      "index": 2,
+      "name": "height_bin",
+      "description": "Cardiovascular dataset variable: patient height. The CAIM preprocessing discretizes height into interval-style categorical values."
+    },
+    {
+      "index": 3,
+      "name": "weight_bin",
+      "description": "Cardiovascular dataset variable: patient weight. The CAIM preprocessing discretizes weight into interval-style categorical values."
+    },
+    {
+      "index": 4,
+      "name": "systolic_pressure_bin",
+      "description": "Cardiovascular dataset variable: systolic blood pressure, originally named ap_hi. The CAIM preprocessing discretizes this measurement into interval-style categorical values."
+    },
+    {
+      "index": 5,
+      "name": "diastolic_pressure_bin",
+      "description": "Cardiovascular dataset variable: diastolic blood pressure, originally named ap_lo. The CAIM preprocessing discretizes this measurement into interval-style categorical values."
+    },
+    {
+      "index": 6,
+      "name": "cholesterol",
+      "description": "Cardiovascular dataset variable: cholesterol category, typically encoded as normal, above normal, or well above normal."
+    },
+    {
+      "index": 7,
+      "name": "glucose",
+      "description": "Cardiovascular dataset variable: glucose category, typically encoded as normal, above normal, or well above normal."
+    },
+    {
+      "index": 8,
+      "name": "smoking",
+      "description": "Cardiovascular dataset variable: smoking indicator."
+    },
+    {
+      "index": 9,
+      "name": "alcohol_intake",
+      "description": "Cardiovascular dataset variable: alcohol intake indicator."
+    },
+    {
+      "index": 10,
+      "name": "physical_activity",
+      "description": "Cardiovascular dataset variable: physical activity indicator."
+    },
+    {
+      "index": 11,
+      "name": "cardio",
+      "description": "Prediction target for the cardiovascular task: whether the patient has cardiovascular disease."
+    }
+  ],
+  "pc": {
+    "alpha": 0.05,
+    "independence_test": "auto",
+    "sample_size": 2000,
+    "ci_threshold": 0.001,
+    "max_uncertain_pairs": 100,
+    "jitter_scale": 0.000001
+  },
+  "llm": {
+    "base_url": "https://api.deepseek.com",
+    "model": "deepseek-v4-flash",
+    "cache_path": null,
+    "sleep_seconds": 0.0
+  },
+  "training": {
+    "predictor": "mlp"
+  }
+}

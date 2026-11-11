@@ -1,0 +1,78 @@
+{
+  "run_name": "diamonds_llmcd",
+  "dataset": "diamonds",
+  "random_state": 42,
+  "data": {
+    "table_path": null,
+    "target_idx": 9
+  },
+  "features": [
+    {
+      "index": 0,
+      "name": "carat",
+      "description": "Diamonds dataset variable: diamond weight in carats."
+    },
+    {
+      "index": 1,
+      "name": "cut",
+      "description": "Diamonds dataset variable: cut quality category, originally ranging from Fair through Ideal. In this repository it is encoded numerically."
+    },
+    {
+      "index": 2,
+      "name": "color",
+      "description": "Diamonds dataset variable: diamond color grade, originally from D as best to J as worst. In this repository it is encoded numerically."
+    },
+    {
+      "index": 3,
+      "name": "clarity",
+      "description": "Diamonds dataset variable: clarity grade, originally categories such as I1, SI, VS, VVS, and IF. In this repository it is encoded numerically."
+    },
+    {
+      "index": 4,
+      "name": "depth",
+      "description": "Diamonds dataset variable: total depth percentage, defined from the diamond depth relative to its average diameter."
+    },
+    {
+      "index": 5,
+      "name": "table",
+      "description": "Diamonds dataset variable: table percentage, the width of the top facet relative to the widest point of the diamond."
+    },
+    {
+      "index": 6,
+      "name": "x",
+      "description": "Diamonds dataset variable: diamond length in millimeters."
+    },
+    {
+      "index": 7,
+      "name": "y",
+      "description": "Diamonds dataset variable: diamond width in millimeters."
+    },
+    {
+      "index": 8,
+      "name": "z",
+      "description": "Diamonds dataset variable: diamond depth in millimeters."
+    },
+    {
+      "index": 9,
+      "name": "price",
+      "description": "Prediction target for the diamonds task: diamond price in US dollars. The CAIM preprocessing moves price to the final column."
+    }
+  ],
+  "pc": {
+    "alpha": 0.05,
+    "independence_test": "auto",
+    "sample_size": 2000,
+    "ci_threshold": 0.001,
+    "max_uncertain_pairs": 100,
+    "jitter_scale": 0.000001
+  },
+  "llm": {
+    "base_url": "https://api.deepseek.com",
+    "model": "deepseek-v4-flash",
+    "cache_path": null,
+    "sleep_seconds": 0.0
+  },
+  "training": {
+    "predictor": "mlp"
+  }
+}

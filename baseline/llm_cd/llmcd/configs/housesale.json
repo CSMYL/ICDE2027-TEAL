@@ -1,0 +1,228 @@
+{
+  "run_name": "housesale_llmcd",
+  "dataset": "housesale",
+  "random_state": 42,
+  "data": {
+    "table_path": null,
+    "target_idx": 39
+  },
+  "features": [
+    {
+      "index": 0,
+      "name": "Area",
+      "description": "Indian metropolitan housing dataset variable: property area or size."
+    },
+    {
+      "index": 1,
+      "name": "Location",
+      "description": "Indian metropolitan housing dataset variable: property locality or neighborhood. In this repository it is encoded numerically."
+    },
+    {
+      "index": 2,
+      "name": "No_of_Bedrooms",
+      "description": "Indian metropolitan housing dataset variable: number of bedrooms."
+    },
+    {
+      "index": 3,
+      "name": "Resale",
+      "description": "Indian metropolitan housing dataset variable: indicator for whether the property is a resale listing."
+    },
+    {
+      "index": 4,
+      "name": "MaintenanceStaff",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of maintenance staff."
+    },
+    {
+      "index": 5,
+      "name": "Gymnasium",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of a gymnasium amenity."
+    },
+    {
+      "index": 6,
+      "name": "SwimmingPool",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of a swimming pool amenity."
+    },
+    {
+      "index": 7,
+      "name": "LandscapedGardens",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of landscaped gardens."
+    },
+    {
+      "index": 8,
+      "name": "JoggingTrack",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of a jogging track."
+    },
+    {
+      "index": 9,
+      "name": "RainWaterHarvesting",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of rain water harvesting."
+    },
+    {
+      "index": 10,
+      "name": "IndoorGames",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of indoor games."
+    },
+    {
+      "index": 11,
+      "name": "ShoppingMall",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of shopping mall access or amenity."
+    },
+    {
+      "index": 12,
+      "name": "Intercom",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of an intercom facility."
+    },
+    {
+      "index": 13,
+      "name": "SportsFacility",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of sports facilities."
+    },
+    {
+      "index": 14,
+      "name": "ATM",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of ATM access."
+    },
+    {
+      "index": 15,
+      "name": "ClubHouse",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of a club house."
+    },
+    {
+      "index": 16,
+      "name": "School",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of school access nearby."
+    },
+    {
+      "index": 17,
+      "name": "Security_24X7",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of 24 by 7 security."
+    },
+    {
+      "index": 18,
+      "name": "PowerBackup",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of power backup."
+    },
+    {
+      "index": 19,
+      "name": "CarParking",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of car parking."
+    },
+    {
+      "index": 20,
+      "name": "StaffQuarter",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of staff quarters."
+    },
+    {
+      "index": 21,
+      "name": "Cafeteria",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of a cafeteria."
+    },
+    {
+      "index": 22,
+      "name": "MultipurposeRoom",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of a multipurpose room."
+    },
+    {
+      "index": 23,
+      "name": "Hospital",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of hospital access nearby."
+    },
+    {
+      "index": 24,
+      "name": "WashingMachine",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of a washing machine furnishing or amenity."
+    },
+    {
+      "index": 25,
+      "name": "Gasconnection",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of a gas connection."
+    },
+    {
+      "index": 26,
+      "name": "AC",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of air conditioning."
+    },
+    {
+      "index": 27,
+      "name": "Wifi",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of Wi-Fi."
+    },
+    {
+      "index": 28,
+      "name": "Childrens_play_area",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of a children's play area."
+    },
+    {
+      "index": 29,
+      "name": "LiftAvailable",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of lift or elevator access."
+    },
+    {
+      "index": 30,
+      "name": "BED",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of bed furnishing."
+    },
+    {
+      "index": 31,
+      "name": "VaastuCompliant",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator that the property is Vaastu compliant."
+    },
+    {
+      "index": 32,
+      "name": "Microwave",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of microwave furnishing."
+    },
+    {
+      "index": 33,
+      "name": "GolfCourse",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of golf course access."
+    },
+    {
+      "index": 34,
+      "name": "TV",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of TV furnishing."
+    },
+    {
+      "index": 35,
+      "name": "DiningTable",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of dining table furnishing."
+    },
+    {
+      "index": 36,
+      "name": "Sofa",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of sofa furnishing."
+    },
+    {
+      "index": 37,
+      "name": "Wardrobe",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of wardrobe furnishing."
+    },
+    {
+      "index": 38,
+      "name": "Refrigerator",
+      "description": "Indian metropolitan housing dataset variable: availability or indicator of refrigerator furnishing."
+    },
+    {
+      "index": 39,
+      "name": "Price",
+      "description": "Prediction target for the house sale task: property sale price. The CAIM preprocessing concatenates the six city CSV files and shuffles them with seed 42."
+    }
+  ],
+  "pc": {
+    "alpha": 0.05,
+    "independence_test": "auto",
+    "sample_size": 500,
+    "ci_threshold": 0.001,
+    "max_uncertain_pairs": 100,
+    "jitter_scale": 0.000001
+  },
+  "llm": {
+    "base_url": "https://api.deepseek.com",
+    "model": "deepseek-v4-flash",
+    "cache_path": null,
+    "sleep_seconds": 0.0
+  },
+  "training": {
+    "predictor": "mlp"
+  }
+}

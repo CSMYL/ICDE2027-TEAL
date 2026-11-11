@@ -1,0 +1,194 @@
+{
+  "task": "regression",
+  "columns": [
+    {
+      "name": "feature0",
+      "type": "CATEGORICAL",
+      "cardinality": 7
+    },
+    {
+      "name": "feature1",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature2",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature3",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature4",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature5",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature6",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature7",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature8",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature9",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature10",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature11",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature12",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature13",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature14",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature15",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature16",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature17",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature18",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature19",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature20",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature21",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature22",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature23",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature24",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature25",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature26",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature27",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature28",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature29",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature30",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature31",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature32",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature33",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature34",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature35",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature36",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "TARGET",
+      "type": "NUMERIC"
+    }
+  ]
+}

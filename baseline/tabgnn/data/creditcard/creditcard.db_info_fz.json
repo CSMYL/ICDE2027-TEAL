@@ -1,0 +1,121 @@
+{
+ "task": {
+  "type": "classification",
+  "n_classes": 2,
+  "n_train": 227844,
+  "n_test": 56962,
+  "train_class_counts": [
+   227450,
+   394
+  ]
+ },
+ "node_type_to_int": {
+  "Main_table": 0
+ },
+ "edge_type_to_int": {
+  "SELF": 0,
+  "SIMILARITY_EDGE": 1
+ },
+ "node_types_and_features": {
+  "Main_table": {
+   "INDEX_ID": {
+    "type": "SCALAR"
+   },
+   "feature0": {
+    "type": "SCALAR"
+   },
+   "feature1": {
+    "type": "SCALAR"
+   },
+   "feature2": {
+    "type": "SCALAR"
+   },
+   "feature3": {
+    "type": "SCALAR"
+   },
+   "feature4": {
+    "type": "SCALAR"
+   },
+   "feature5": {
+    "type": "SCALAR"
+   },
+   "feature6": {
+    "type": "SCALAR"
+   },
+   "feature7": {
+    "type": "SCALAR"
+   },
+   "feature8": {
+    "type": "SCALAR"
+   },
+   "feature9": {
+    "type": "SCALAR"
+   },
+   "feature10": {
+    "type": "SCALAR"
+   },
+   "feature11": {
+    "type": "SCALAR"
+   },
+   "feature12": {
+    "type": "SCALAR"
+   },
+   "feature13": {
+    "type": "SCALAR"
+   },
+   "feature14": {
+    "type": "SCALAR"
+   },
+   "feature15": {
+    "type": "SCALAR"
+   },
+   "feature16": {
+    "type": "SCALAR"
+   },
+   "feature17": {
+    "type": "SCALAR"
+   },
+   "feature18": {
+    "type": "SCALAR"
+   },
+   "feature19": {
+    "type": "SCALAR"
+   },
+   "feature20": {
+    "type": "SCALAR"
+   },
+   "feature21": {
+    "type": "SCALAR"
+   },
+   "feature22": {
+    "type": "SCALAR"
+   },
+   "feature23": {
+    "type": "SCALAR"
+   },
+   "feature24": {
+    "type": "SCALAR"
+   },
+   "feature25": {
+    "type": "SCALAR"
+   },
+   "feature26": {
+    "type": "SCALAR"
+   },
+   "feature27": {
+    "type": "SCALAR"
+   },
+   "feature28": {
+    "type": "SCALAR"
+   },
+   "feature29": {
+    "type": "SCALAR"
+   },
+   "TARGET": {
+    "type": "CATEGORICAL",
+    "cardinality": 2
+   }
+  }
+ },
+ "label_feature": "Main_table.TARGET"
+}

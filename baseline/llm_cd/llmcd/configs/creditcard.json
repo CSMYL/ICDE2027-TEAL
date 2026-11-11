@@ -1,0 +1,183 @@
+{
+  "run_name": "creditcard_llmcd",
+  "dataset": "creditcard",
+  "random_state": 42,
+  "data": {
+    "table_path": null,
+    "target_idx": 30
+  },
+  "features": [
+    {
+      "index": 0,
+      "name": "Time",
+      "description": "Credit card fraud variable: seconds elapsed between this transaction and the first transaction in the dataset."
+    },
+    {
+      "index": 1,
+      "name": "V1",
+      "description": "Credit card fraud variable: anonymized principal component feature V1 derived from confidential transaction attributes."
+    },
+    {
+      "index": 2,
+      "name": "V2",
+      "description": "Credit card fraud variable: anonymized principal component feature V2 derived from confidential transaction attributes."
+    },
+    {
+      "index": 3,
+      "name": "V3",
+      "description": "Credit card fraud variable: anonymized principal component feature V3 derived from confidential transaction attributes."
+    },
+    {
+      "index": 4,
+      "name": "V4",
+      "description": "Credit card fraud variable: anonymized principal component feature V4 derived from confidential transaction attributes."
+    },
+    {
+      "index": 5,
+      "name": "V5",
+      "description": "Credit card fraud variable: anonymized principal component feature V5 derived from confidential transaction attributes."
+    },
+    {
+      "index": 6,
+      "name": "V6",
+      "description": "Credit card fraud variable: anonymized principal component feature V6 derived from confidential transaction attributes."
+    },
+    {
+      "index": 7,
+      "name": "V7",
+      "description": "Credit card fraud variable: anonymized principal component feature V7 derived from confidential transaction attributes."
+    },
+    {
+      "index": 8,
+      "name": "V8",
+      "description": "Credit card fraud variable: anonymized principal component feature V8 derived from confidential transaction attributes."
+    },
+    {
+      "index": 9,
+      "name": "V9",
+      "description": "Credit card fraud variable: anonymized principal component feature V9 derived from confidential transaction attributes."
+    },
+    {
+      "index": 10,
+      "name": "V10",
+      "description": "Credit card fraud variable: anonymized principal component feature V10 derived from confidential transaction attributes."
+    },
+    {
+      "index": 11,
+      "name": "V11",
+      "description": "Credit card fraud variable: anonymized principal component feature V11 derived from confidential transaction attributes."
+    },
+    {
+      "index": 12,
+      "name": "V12",
+      "description": "Credit card fraud variable: anonymized principal component feature V12 derived from confidential transaction attributes."
+    },
+    {
+      "index": 13,
+      "name": "V13",
+      "description": "Credit card fraud variable: anonymized principal component feature V13 derived from confidential transaction attributes."
+    },
+    {
+      "index": 14,
+      "name": "V14",
+      "description": "Credit card fraud variable: anonymized principal component feature V14 derived from confidential transaction attributes."
+    },
+    {
+      "index": 15,
+      "name": "V15",
+      "description": "Credit card fraud variable: anonymized principal component feature V15 derived from confidential transaction attributes."
+    },
+    {
+      "index": 16,
+      "name": "V16",
+      "description": "Credit card fraud variable: anonymized principal component feature V16 derived from confidential transaction attributes."
+    },
+    {
+      "index": 17,
+      "name": "V17",
+      "description": "Credit card fraud variable: anonymized principal component feature V17 derived from confidential transaction attributes."
+    },
+    {
+      "index": 18,
+      "name": "V18",
+      "description": "Credit card fraud variable: anonymized principal component feature V18 derived from confidential transaction attributes."
+    },
+    {
+      "index": 19,
+      "name": "V19",
+      "description": "Credit card fraud variable: anonymized principal component feature V19 derived from confidential transaction attributes."
+    },
+    {
+      "index": 20,
+      "name": "V20",
+      "description": "Credit card fraud variable: anonymized principal component feature V20 derived from confidential transaction attributes."
+    },
+    {
+      "index": 21,
+      "name": "V21",
+      "description": "Credit card fraud variable: anonymized principal component feature V21 derived from confidential transaction attributes."
+    },
+    {
+      "index": 22,
+      "name": "V22",
+      "description": "Credit card fraud variable: anonymized principal component feature V22 derived from confidential transaction attributes."
+    },
+    {
+      "index": 23,
+      "name": "V23",
+      "description": "Credit card fraud variable: anonymized principal component feature V23 derived from confidential transaction attributes."
+    },
+    {
+      "index": 24,
+      "name": "V24",
+      "description": "Credit card fraud variable: anonymized principal component feature V24 derived from confidential transaction attributes."
+    },
+    {
+      "index": 25,
+      "name": "V25",
+      "description": "Credit card fraud variable: anonymized principal component feature V25 derived from confidential transaction attributes."
+    },
+    {
+      "index": 26,
+      "name": "V26",
+      "description": "Credit card fraud variable: anonymized principal component feature V26 derived from confidential transaction attributes."
+    },
+    {
+      "index": 27,
+      "name": "V27",
+      "description": "Credit card fraud variable: anonymized principal component feature V27 derived from confidential transaction attributes."
+    },
+    {
+      "index": 28,
+      "name": "V28",
+      "description": "Credit card fraud variable: anonymized principal component feature V28 derived from confidential transaction attributes."
+    },
+    {
+      "index": 29,
+      "name": "Amount",
+      "description": "Credit card fraud variable: transaction amount."
+    },
+    {
+      "index": 30,
+      "name": "Class",
+      "description": "Prediction target for the credit card fraud task: whether the transaction is fraudulent."
+    }
+  ],
+  "pc": {
+    "alpha": 0.05,
+    "independence_test": "auto",
+    "sample_size": 500,
+    "ci_threshold": 0.001,
+    "max_uncertain_pairs": 100,
+    "jitter_scale": 0.000001
+  },
+  "llm": {
+    "base_url": "https://api.deepseek.com",
+    "model": "deepseek-v4-flash",
+    "cache_path": null,
+    "sleep_seconds": 0.0
+  },
+  "training": {
+    "predictor": "mlp"
+  }
+}

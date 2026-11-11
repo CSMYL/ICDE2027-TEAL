@@ -1,0 +1,44 @@
+{
+  "run_name": "synthetic_demo",
+  "dataset": "synthetic",
+  "random_state": 42,
+  "data": {
+    "table_path": null,
+    "header": "infer",
+    "target_column": null,
+    "target_idx": null,
+    "categorical_indices": [],
+    "continuous_indices": [],
+    "standardize_continuous": true,
+    "drop_columns": []
+  },
+  "features": [
+    {
+      "index": 0,
+      "name": "Node_0",
+      "description": "Synthetic variable Node_0. Replace this with the semantic meaning of the column."
+    },
+    {
+      "index": 1,
+      "name": "Node_1",
+      "description": "Synthetic variable Node_1. Replace this with the semantic meaning of the column."
+    }
+  ],
+  "pc": {
+    "alpha": 0.05,
+    "independence_test": "auto",
+    "sample_size": 500,
+    "ci_threshold": 0.001,
+    "max_uncertain_pairs": 100,
+    "jitter_scale": 0.000001
+  },
+  "llm": {
+    "base_url": "https://api.deepseek.com",
+    "model": "deepseek-v4-flash",
+    "cache_path": null,
+    "sleep_seconds": 0.0
+  },
+  "training": {
+    "predictor": "rf"
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "test_small": {
+    "processed": {
+      "task": "binary classification",
+      "local_path": "test_data/test_small.csv",
+      "ds_info": "test_data/data/data/small.ds_info.json"
+    }
+  },
+  "adult": {
+    "processed": {
+      "task": "binary classification",
+      "local_path": "../../raw_data/adult.csv",
+      "ds_info": "test_data/adult.ds_info.json"
+    }
+  },
+  "cardio": {
+    "processed": {
+      "task": "binary classification",
+      "local_path": "../../raw_data/cardio.csv",
+      "ds_info": "test_data/cardio.ds_info.json"
+    }
+  },
+  "creditcard": {
+    "processed": {
+      "task": "binary classification",
+      "local_path": "../../raw_data/creditcard.csv",
+      "ds_info": "test_data/creditcard.ds_info.json"
+    }
+  },
+  "diamonds": {
+    "processed": {
+      "task": "regression",
+      "local_path": "../../raw_data/diamonds.csv",
+      "ds_info": "test_data/diamonds.ds_info.json"
+    }
+  },
+  "elevator": {
+    "processed": {
+      "task": "regression",
+      "local_path": "../../raw_data/elevator.csv",
+      "ds_info": "test_data/elevator.ds_info.json"
+    }
+  },
+  "housesale": {
+    "processed": {
+      "task": "regression",
+      "local_path": "../../raw_data/housesale.csv",
+      "ds_info": "test_data/housesale.ds_info.json"
+    }
+  },
+  "crime": {
+    "processed": {
+      "task": "regression",
+      "local_path": "../../raw_data/crime.csv",
+      "ds_info": "test_data/crime.ds_info.json"
+    }
+  },
+  "meps": {
+    "processed": {
+      "task": "regression",
+      "local_path": "../../raw_data/meps.csv",
+      "ds_info": "test_data/meps.ds_info.json"
+    }
+  }
+}

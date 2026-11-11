@@ -1,0 +1,65 @@
+{
+  "task": "binary classification",
+  "columns": [
+    {
+      "name": "feature0",
+      "type": "CATEGORICAL",
+      "cardinality": 5
+    },
+    {
+      "name": "feature1",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature2",
+      "type": "CATEGORICAL",
+      "cardinality": 5
+    },
+    {
+      "name": "feature3",
+      "type": "CATEGORICAL",
+      "cardinality": 5
+    },
+    {
+      "name": "feature4",
+      "type": "CATEGORICAL",
+      "cardinality": 47
+    },
+    {
+      "name": "feature5",
+      "type": "CATEGORICAL",
+      "cardinality": 65
+    },
+    {
+      "name": "feature6",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature7",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "feature8",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature9",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature10",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "TARGET",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    }
+  ]
+}

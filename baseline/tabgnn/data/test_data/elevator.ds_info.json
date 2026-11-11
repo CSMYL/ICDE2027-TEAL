@@ -1,0 +1,37 @@
+{
+  "task": "regression",
+  "columns": [
+    {
+      "name": "feature0",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature1",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature2",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature3",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature4",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature5",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature6",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "TARGET",
+      "type": "NUMERIC"
+    }
+  ]
+}

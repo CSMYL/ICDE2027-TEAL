@@ -1,0 +1,103 @@
+{
+  "run_name": "adult_llmcd",
+  "dataset": "adult",
+  "random_state": 42,
+  "data": {
+    "table_path": null,
+    "target_idx": 14
+  },
+  "features": [
+    {
+      "index": 0,
+      "name": "age",
+      "description": "Adult Census variable: age of the person. In this repository it is already stored as a numeric processed feature."
+    },
+    {
+      "index": 1,
+      "name": "workclass",
+      "description": "Adult Census variable: employment type or work class, such as private, government, self-employed, or without pay. In this repository it is encoded numerically."
+    },
+    {
+      "index": 2,
+      "name": "fnlwgt",
+      "description": "Adult Census variable: final sampling weight, representing how many people in the population the record is estimated to represent."
+    },
+    {
+      "index": 3,
+      "name": "education",
+      "description": "Adult Census variable: highest education category, such as high school, bachelors, masters, doctorate, and related categories. In this repository it is encoded numerically."
+    },
+    {
+      "index": 4,
+      "name": "education_num",
+      "description": "Adult Census variable: numeric years or level of education corresponding to the education category."
+    },
+    {
+      "index": 5,
+      "name": "marital_status",
+      "description": "Adult Census variable: marital status category, such as married, divorced, separated, widowed, or never married. In this repository it is encoded numerically."
+    },
+    {
+      "index": 6,
+      "name": "occupation",
+      "description": "Adult Census variable: occupation category, such as technical support, craft repair, sales, executive managerial, professional specialty, service, or farming fishing. In this repository it is encoded numerically."
+    },
+    {
+      "index": 7,
+      "name": "relationship",
+      "description": "Adult Census variable: household relationship category, such as husband, wife, own child, not in family, unmarried, or other relative. In this repository it is encoded numerically."
+    },
+    {
+      "index": 8,
+      "name": "race",
+      "description": "Adult Census variable: race category. In this repository it is encoded numerically."
+    },
+    {
+      "index": 9,
+      "name": "sex",
+      "description": "Adult Census variable: sex category. In this repository it is encoded numerically."
+    },
+    {
+      "index": 10,
+      "name": "capital_gain",
+      "description": "Adult Census variable: capital gains income reported for the person. In this repository it is stored as a numeric processed feature."
+    },
+    {
+      "index": 11,
+      "name": "capital_loss",
+      "description": "Adult Census variable: capital losses reported for the person. In this repository it is stored as a numeric processed feature."
+    },
+    {
+      "index": 12,
+      "name": "hours_per_week",
+      "description": "Adult Census variable: usual hours worked per week. In this repository it is stored as a numeric processed feature."
+    },
+    {
+      "index": 13,
+      "name": "native_country",
+      "description": "Adult Census variable: country of origin. In this repository it is encoded numerically."
+    },
+    {
+      "index": 14,
+      "name": "income",
+      "description": "Prediction target for the Adult Census task: whether annual income is above the dataset threshold, usually represented as greater than 50K versus not greater than 50K."
+    }
+  ],
+  "pc": {
+    "alpha": 0.05,
+    "independence_test": "auto",
+    "sample_size": 2000,
+    "ci_threshold": 0.001,
+    "max_uncertain_pairs": 100,
+    "jitter_scale": 0.000001
+  },
+  "llm": {
+    "base_url": "https://api.deepseek.com",
+    "model": "deepseek-v4-flash",
+    "cache_path": null,
+    "sleep_seconds": 0.0
+  },
+  "training": {
+    "predictor": "mlp"
+  }
+}

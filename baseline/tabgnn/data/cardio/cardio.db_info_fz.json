@@ -1,0 +1,75 @@
+{
+ "task": {
+  "type": "classification",
+  "n_classes": 2,
+  "n_train": 56000,
+  "n_test": 14000,
+  "train_class_counts": [
+   28029,
+   27971
+  ]
+ },
+ "node_type_to_int": {
+  "Main_table": 0
+ },
+ "edge_type_to_int": {
+  "SELF": 0,
+  "SIMILARITY_EDGE": 1
+ },
+ "node_types_and_features": {
+  "Main_table": {
+   "INDEX_ID": {
+    "type": "SCALAR"
+   },
+   "feature0": {
+    "type": "CATEGORICAL",
+    "cardinality": 5
+   },
+   "feature1": {
+    "type": "CATEGORICAL",
+    "cardinality": 2
+   },
+   "feature2": {
+    "type": "CATEGORICAL",
+    "cardinality": 5
+   },
+   "feature3": {
+    "type": "CATEGORICAL",
+    "cardinality": 5
+   },
+   "feature4": {
+    "type": "CATEGORICAL",
+    "cardinality": 47
+   },
+   "feature5": {
+    "type": "CATEGORICAL",
+    "cardinality": 65
+   },
+   "feature6": {
+    "type": "CATEGORICAL",
+    "cardinality": 3
+   },
+   "feature7": {
+    "type": "CATEGORICAL",
+    "cardinality": 3
+   },
+   "feature8": {
+    "type": "CATEGORICAL",
+    "cardinality": 2
+   },
+   "feature9": {
+    "type": "CATEGORICAL",
+    "cardinality": 2
+   },
+   "feature10": {
+    "type": "CATEGORICAL",
+    "cardinality": 2
+   },
+   "TARGET": {
+    "type": "CATEGORICAL",
+    "cardinality": 2
+   }
+  }
+ },
+ "label_feature": "Main_table.TARGET"
+}

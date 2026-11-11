@@ -1,0 +1,68 @@
+{
+  "run_name": "elevator_llmcd",
+  "dataset": "elevator",
+  "random_state": 42,
+  "data": {
+    "table_path": null,
+    "target_idx": 7
+  },
+  "features": [
+    {
+      "index": 0,
+      "name": "revolutions",
+      "description": "Elevator predictive maintenance variable: motor or machine revolutions measured during operation."
+    },
+    {
+      "index": 1,
+      "name": "humidity",
+      "description": "Elevator predictive maintenance variable: ambient or equipment-area humidity measurement."
+    },
+    {
+      "index": 2,
+      "name": "x1",
+      "description": "Elevator predictive maintenance variable: anonymized or engineered sensor feature x1 from the original maintenance dataset."
+    },
+    {
+      "index": 3,
+      "name": "x2",
+      "description": "Elevator predictive maintenance variable: anonymized or engineered sensor feature x2 from the original maintenance dataset."
+    },
+    {
+      "index": 4,
+      "name": "x3",
+      "description": "Elevator predictive maintenance variable: anonymized or engineered sensor feature x3 from the original maintenance dataset."
+    },
+    {
+      "index": 5,
+      "name": "x4",
+      "description": "Elevator predictive maintenance variable: anonymized or engineered sensor feature x4 from the original maintenance dataset."
+    },
+    {
+      "index": 6,
+      "name": "x5",
+      "description": "Elevator predictive maintenance variable: anonymized or engineered sensor feature x5 from the original maintenance dataset."
+    },
+    {
+      "index": 7,
+      "name": "vibration",
+      "description": "Prediction target for the elevator task: vibration measurement. The CAIM preprocessing moves vibration to the final column."
+    }
+  ],
+  "pc": {
+    "alpha": 0.05,
+    "independence_test": "auto",
+    "sample_size": 2000,
+    "ci_threshold": 0.001,
+    "max_uncertain_pairs": 100,
+    "jitter_scale": 0.000001
+  },
+  "llm": {
+    "base_url": "https://api.deepseek.com",
+    "model": "deepseek-v4-flash",
+    "cache_path": null,
+    "sleep_seconds": 0.0
+  },
+  "training": {
+    "predictor": "mlp"
+  }
+}

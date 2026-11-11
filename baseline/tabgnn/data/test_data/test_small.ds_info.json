@@ -1,0 +1,37 @@
+{
+  "task": "binary classification",
+  "columns": [
+    {
+      "name": "TARGET",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature1",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature2",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature3",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature4",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "category1",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    },
+    {
+      "name": "category2",
+      "type": "CATEGORICAL",
+      "cardinality": 3
+    }
+  ]
+}
+
