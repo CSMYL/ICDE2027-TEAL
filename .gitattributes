@@ -1,0 +1,8 @@
+# Large data files — tracked with Git LFS
+*.parquet filter=lfs diff=lfs merge=lfs -text
+*.csv filter=lfs diff=lfs merge=lfs -text
+*.arff filter=lfs diff=lfs merge=lfs -text
+*.npy filter=lfs diff=lfs merge=lfs -text
+
+# Pretrained model weights — tracked with Git LFS
+*.ckpt filter=lfs diff=lfs merge=lfs -text

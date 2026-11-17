@@ -1,0 +1,130 @@
+{
+  "task": "binary classification",
+  "columns": [
+    {
+      "name": "feature0",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature1",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature2",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature3",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature4",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature5",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature6",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature7",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature8",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature9",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature10",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature11",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature12",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature13",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature14",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature15",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature16",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature17",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature18",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature19",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature20",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature21",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature22",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature23",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature24",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature25",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature26",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature27",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature28",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature29",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "TARGET",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    }
+  ]
+}

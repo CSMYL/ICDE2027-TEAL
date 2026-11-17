@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+
+# Runtime outputs / generated artifacts
+*.log
+bestmodels/
+checkpoints_*/
+tmp*.ckpt
+*.pth
+causal_graph_results_*/
+*_results.txt
+*_causal_attention_msk_results.txt
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store

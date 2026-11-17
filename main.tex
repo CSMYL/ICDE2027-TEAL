@@ -1,0 +1,1423 @@
+\documentclass[conference]{IEEEtran}
+
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{multirow}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+
+\newcommand{\icde}[1]{{\color{black}#1}}
+\newcommand{\zj}[1]{{\color{black}#1}}
+\newcommand{\done}[1]{{\color{black}#1}}
+\newcommand{\kdd}[1]{{\color{black}#1}}
+\newcommand{\rem}[1]{{\color{black}#1}}
+\newcommand{\rl}[1]{{\color{black}#1}}
+\newcommand{\sy}[1]{{\color{black}#1}}
+\newcommand{\sydes}[1]{{\color{black}#1}}
+\newcommand{\rln}[1]{{\color{black}#1}}
+\newcommand{\sydesi}[1]{{\color{black}#1}}
+\newcommand{\sytwo}[1]{{\color{black}#1}}
+\newcommand{\rlend}[1]{{\color{black}#1}}
+\newcommand{\syend}[1]{{\color{black}#1}}
+\newcommand{\rlx}[1]{\color{black}#1}
+\newcommand{\syadd}[1]{{\color{black}#1}}
+\newcommand{\syfix}[1]{{\color{black}#1}}
+\newcommand{\syne}[1]{{\color{black}#1}}
+\newcommand{\vldb}[1]{{\color{black}#1}}
+\newcommand{\zjic}[1]{{\color{black}#1}}
+\newcommand{\syic}[1]{{\color{black}#1}}
+\newcommand{\syone}[1]{{\color{black}#1}}
+
+\newcommand*{\ourmodel}{TEAL}
+\usepackage{comment}
+\usepackage[caption=false, font=footnotesize]{subfig}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+
+\title{Efficient Structure-Guided Hierarchical Analytics via Inter-Column Dependency Modeling
+}
+%%% (done) zj-ic2-done: change the title a bit, not the same with VLDB
+%DART: Learning Inter-Column Dependencies for Structure-Guided Analytics on Structure Data
+%%%DICE： Efficient Structure-Guided Analytics on Structured Data via Inter-Column Dependency Modeling
+%CHAP: Efficient \rl{Causal-Incorporated} Hierarchy-Aware Prediction \sy{for Structured Data}
+%Towards Efficient and Interpretable Structured Data Analytics \\ via Causal-Aware Hierarchical Modeling
+\author{
+    \IEEEauthorblockN{
+        Siyu Chen\IEEEauthorrefmark{2},
+        Runlin Ma\IEEEauthorrefmark{3},
+        Zhaojing Luo\IEEEauthorrefmark{2},
+        Meihui Zhang\IEEEauthorrefmark{2},
+        Zhongle Xie\IEEEauthorrefmark{4},
+        Naili Xing\IEEEauthorrefmark{5},
+        Xiaokui Xiao\IEEEauthorrefmark{5}
+    }
+    \IEEEauthorblockA{
+        \IEEEauthorrefmark{2}\textit{Beijing Institute of Technology},
+        \IEEEauthorrefmark{3}\textit{Chinese Academy of Sciences},
+        \IEEEauthorrefmark{4}\textit{Zhejiang University},
+        \IEEEauthorrefmark{5}\textit{National University of Singapore}
+    }
+    \IEEEauthorblockA{
+        3120250945@bit.edu.cn,
+        marunlin@iie.ac.cn,
+        zjluo@bit.edu.cn,
+        meihui\_zhang@bit.edu.cn,\\
+        xiezl@zju.edu.cn,
+        xingnl@comp.nus.edu.sg,
+        xkxiao@nus.edu.sg
+    }
+}
+\maketitle
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\setcounter{footnote}{2}
+\footnotetext{Runlin Ma's work was done when the author was at Beijing Institute of Technology.}
+
+\begin{abstract}
+Relational databases are fundamental data management infrastructures for many real-world applications, including healthcare, finance, and recommendation systems. \syic{Analytics over their high-dimensional, sparse structured data must exploit complex inter-column relationships to support downstream prediction.}
+Existing methods for structured data analytics mainly fall into two categories. 
+The first \syic{category} utilizes \syic{attention or graph-based structures to capture} inter-column correlations, but these data-driven associations have been shown to include \vldb{spurious dependencies}, 
+\syic{while the second \syic{category} incorporates causal analysis into downstream predictive modeling but only uses the learned causal structure to constrain input connectivity or to serve as auxiliary information rather than directly in predictive computation, limiting adaptability and interpretability.}
+% The second category incorporates causal analysis into \vldb{downstream predictive modeling.} 
+% \syic{
+% % to improve the reliability of learned relationships. 
+% However, existing approaches typically use the learned causal structures to constrain input-layer connectivity or provide auxiliary information, rather than directly integrating them into task-specific predictive computations. 
+% This limits the adaptability of structural guidance to downstream tasks and lacks interpretability.
+% }
+%%% (done) zj-ic1-done: input-layer connectivity, auxilirary information, not direct --> less adaptive to tasks and not interpretable?
+
+To address these challenges, we propose an efficient \syic{S\textbf{T}ructure-Guid\textbf{E}d Hier\textbf{A}rchical Ana\textbf{L}ytics (\ourmodel{})}
+%\textbf{C}ausal-\textbf{A}ware H\textbf{I}erarchical \textbf{M}odeling(\ourmodel{}) 
+framework \syic{
+that integrates a learned causal-inspired inter-column dependency structure into structured data predictive modeling through two complementary phases:
+}
+% \zjic{The structure first acts as a soft structural prior that modulates column-wise self-attention, guiding how column representations interact, and meanwhile, the resulting dependency hierarchy relative to the target column provides distance-based constraints on the aggregation of column representations for prediction.}
+\syic{
+the learned structure first acts as a soft structural prior to modulate column-wise self-attention, guiding interactions among column representations; \syic{and} the \zj{derived} target-relative dependency hierarchy provides distance-based constraints on the aggregation of column representations for the final prediction.
+}
+\syic{
+\zjic{The inter-column dependency structure,} a target-conditioned column-level dependency profile, is learned through a self-supervised reconstruction component, regularized by sparsity and acyclicity constraints.
+% \zjic{for improved downstream task prediction}
+%%% (done) zj-ic1-done: sparsity and acyclicity constraints --> for downstream task?
+% In the second phase, the learned structure guides prediction through two complementary paths.
+To coordinate dependency structure learning and 
+%\zjic{predictive modeling}
+\syic{structure-guided prediction}, an alternating optimization scheme is designed to update these two components
+% the dependency structure and the predictor 
+\zjic{jointly}. 
+Furthermore, a lazy-update strategy reduces the overhead of dependency structure updates.
+}
+\syic{\ourmodel{} \zj{finally} provides interpretability through the learned dependency DAG and the attentive weights.}
+%%% (done) zj-ic1-done: check the above
+%%% (done) zj-ic1-done: add interpretability?
+\syic{Experiments} on \syic{nine} relational datasets demonstrate that \ourmodel{} achieves superior predictive performance and efficiency over sixteen state-of-the-art baselines. 
+% \syic{highlighting the effectiveness of integrating learned dependency structures into both inter-column interactions and target-aware column aggregation.}
+%%% (done) zj-ic2-done: efficiency?
+
+\end{abstract}
+%%% (done) zj-ic2-done: shorten the abstract
+
+\begin{IEEEkeywords}
+relational databases, structured data analytics, causal-inspired modeling, dependency structure learning, hierarchy-aware prediction, interpretability
+\end{IEEEkeywords}
+%%% (done) zj-ic2-done: change the index terms
+
+\section{Introduction}
+\rlend{
+Structured data, stored in Relational Database Management Systems (RDBMSs)\cite{r:rdbmsnew1, r:rdbmsnew2, r:rdbmsnew3, r:rdbmsnew4, r:rdbmsnew5, r:rdbmsnew6}, 
+is widely used in real-world applications, e.g., healthcare \cite{r:healthcarenew1, r:healthcarenew2, r:healthcarenew3}, finance \cite{r:financenew1, r:financenew2, r:financenew3, r:financenew4}, and recommendation \cite{r:recommendationnew1, r:recommendationnew2, r:recommendationnew3, r:recommendationnew4, r:recommendationnew5, r:recommendationnew6}.
+}
+While Deep Neural Networks (DNNs) have shown great success in unstructured domains, 
+their performance often degrades when applied to structured data.
+Unlike images or texts, structured data \syic{are} characterized by high dimensionality and sparsity, which calls for pattern learning
+\cite{r:patternlearningnew1, r:patternlearningnew2, r:patternlearningnew3}, i.e., mining the relationships between columns \cite{r:relationshipnew1, r:relationshipnew2} that signal the interactions among features. 
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=1.0\linewidth]{causalintr.pdf}
+  \caption{An illustration of the extraction of \syic{inter-column conditional dependencies} and their application in prediction.}
+  \label{fig:causal-righttop}
+\end{figure}
+
+\vldb{
+Current approaches to learn inter-column relationships 
+% within neural models 
+for structured data analytics can be classified into two categories.}
+The first \vldb{category} leverages specialized structures such as attention \cite{r:tab, r:SAINT} or graph-based architectures \cite{r:gnnbased} to extract patterns between columns. 
+However, these data-driven models 
+are shown to include spurious patterns\cite{r:superior}, 
+\syfix{which are unstable and domain-sensitive
+% , and non-transferable 
+associations that vary across data distributions and cannot generalize to unseen test data.
+% , and improve training performance at the cost of test-time robustness.
+}
+To solve this, the second category integrates causal analysis \vldb{into the downstream prediction model}
+by jointly learning a causal graph as an auxiliary task \cite{r:CASTLE,r:linear}. 
+% These methods \syne{incorporate} regularization \cite{} to select features that are causally related to the target. 
+% Since causal relationships are more stable and reflective of true inter-column interactions \cite{r:causalgood, r:pearl2009} than data-driven associations, these approaches often achieve better generalization \syadd{and interpretability}. 
+\syic{The existing methods often use learned causal structures to constrain input-layer connectivity or provide auxiliary information, rather than directly incorporating them into task-specific predictive computations. 
+The use of structural knowledge is thus less adaptive to downstream tasks and less interpretability~\cite{r:linear, r:MLP}.}
+% Consequently, 
+%%% (done) zj-ic1-done: not mentioning simple models --> input connectivity, auxiliary, not adaptive, not interpretable?
+There are still several key challenges in effectively leveraging inter-column relationships for structured data \vldb{analytics}.
+
+\textbf{Challenge 1:}
+%%% (done) zj-ic1-done: reserve original stable and causal (30%), and emphasize on downstream -- not deleting stable and causal
+% Automated discovery and management of stable inter-column relationships and dependencies for structured data analytics remain an open problem.
+% Existing techniques (e.g., data-driven methods, %functional dependency discovery,
+% correlation analysis) primarily focus on data-driven associations,
+% % capture statistical associations
+\syic{
+There is a lack of an effective way to learn reliable inter-column dependencies that are relevant to downstream prediction.
+}
+%%% (done) zj-ic-done: is less explored? --> need to use there is no, lack or less, not explored to emphasize your novelty
+% which may contain spurious links that act as shortcuts to improve training performance but worsen test results.
+\zjic{
+% From the perspective of relational data profiling, 
+Existing methods mainly focus on data-driven column-level properties and dependencies, such as statistical correlations. 
+These associations may include spurious links that act as shortcuts to improve training performance but worsen test results. \syone{Moreover, these methods} pay less attention to the dependencies between features and the prediction target essential to downstream tasks.
+%%% (done) zj-ic1-done: also mention data-driven (not stable) 
+}
+As illustrated on the left \vldb{and middle sides} of Fig.~\ref{fig:causal-righttop}, 
+in the diamond price prediction task, \rem{the length, width, and height~\syone{($f_1$)}} influence the price indirectly through carat ($f_4$). 
+When dataset bias exists, \syone{data-driven} models may bypass carat and directly associate $f_1$ with the price (e.g., \rem{larger width implies higher price, though a larger width does not necessarily mean a higher carat).}
+\syic{In addition, from the perspective of the downstream price prediction task, carat ($f_4$) provides more relevant predictive information than any individual dimension in $f_1$.}
+% \syic{Since the downstream task is what ultimately matters, the learned dependency structure should retain only the target-relevant feature $f_4$ and exclude the direct association $f_1$.}
+%%% (done) zj-ic1-done: for downstream tasks, the true should also be cataract, the graph should be learened wihout f1, with only f4
+Causal analysis has demonstrated that causal relationships are more robust and invariant across settings\cite{r:causalgood} than data-driven associations.
+\syic{Moreover, it is important to ensure that the learned relationships are useful for downstream prediction.}
+% \syic{This motivates relationship learning 
+%%% (done) zj-ic1-done: suddenly appear dependency? -- relationship learning method that extracts inter-column dependency ...
+% that extracts reliable inter-column attribute dependencies to provide structural guidance for downstream prediction.}
+% However, accurately \syic{learning reliable inter-column dependency structures that are truly relevant to the downstream task in structured data remains highly challenging, as 
+% %it  requires disentangling complex inter-column relationships and \syic{distinguishing target-relevant dependencies from superficial correlations} \cite{notears, r:suna}. \done{Furthermore, 
+% the high dimensionality of structured data introduces numerous irrelevant and complex associations, making it difficult to efficiently capture reliable dependencies}
+% \zjic{Also, the downstream task is unknown, which makes it difficult to identify task-relevant relationships}
+However, learning a reliable and task-relevant target-conditioned \zjic{column-level dependency profile} remains challenging, due to numerous irrelevant associations in high-dimensional data and the unknown downstream task.
+%%% (done) zj-ic1-done: check the above: separate the reason for reliable and downstream tasks
+
+\textbf{Challenge 2:}
+% Integrating discovered dependencies into
+% % **downstream data analytics pipelines**
+% downstream analysis
+% % — such that attribute representations reflect true causal structure rather than surface correlations —
+% remains underexplored
+% % challenge
+% in structured data analytics and management.
+% \syic{How to effectively incorporate learned dependency structures into the internal interactions of expressive predictive models has received limited attention.}
+\syic{
+There is a lack of an effective way to incorporate the dependency knowledge into the internal interactions of predictive models.
+}
+%%% (done) zj-ic1-done: check the above
+\syic{Existing methods usually treat learned dependency structures as auxiliary information to constrain model inputs, rather than letting structural knowledge directly influence inter-column interactions within the model, and consequently offer little adaptivity and interpretability for predictions.}
+%%% (done) zj-ic2-done: need the two references? -- too obvious?
+%Existing methods that integrate dependency structure learning with predictive modeling 
+%%% (done) zj-ic1-done: the below changes to interpretability
+%%% (done) zj-ic1-done: check the above
+%%% (done) zj-ic1-done: not adaptive, not directl, not interepretable?
+% \syic{Explicitly integrating discovered dependencies into the model's internal interactions remains less explored in structured data analytics.}
+\syic{Ideally, the learned dependency structure should \syic{explicitly} modulate internal inter-column interactions \syic{within the predictive computation}, 
+% explicitly influencing information flow across columns, 
+and be dynamically updated during learning, rather than serving only as additional input or an auxiliary constraint.}
+\syic{
+This becomes important for high-capacity models, whose flexible data-driven interactions may not naturally align with the learned structural dependencies.
+}
+However, 
+\syic{integrating these two forms of interactions is non-trivial.}
+\icde{
+\syic{Data-driven interaction mechanisms in expressive models such as attention-based or graph-based architectures which dynamically capture context-dependent inter-column interactions have internal structures that differ from \zjic{the learned dependency structures which provide global structural guidance.}
+% making effective integration challenging.
+}
+}
+\syic{Hence, if structural constraints are too weak, the model may still rely primarily on data-driven interactions, leaving the learned dependencies underutilized; if they are too strong, they may limit the model's ability to capture useful interaction patterns \syic{that are not fully captured by the learned dependencies.} 
+Therefore, how to effectively use learned dependencies to \syic{modulate and guide attribute interaction weights learning} while preserving the model's capacity to capture complex predictive interaction patterns remains a key challenge.}
+
+\textbf{Challenge 3:}
+\syic{
+There is a lack of an effective way to exploit the dependency hierarchies when 
+% aggregating attribute representations.
+performing predictions.
+}
+%%% (done) zj-ic-done: is less explored? --> need to use there is no, lack or less, not explored to emphasize your novelty
+As shown on the right side of Fig.~\ref{fig:causal-righttop},
+given the hidden representations of features $E = \{e_1, e_2, \dots, e_n\}$ and an inter-column relational structure \rem{
+(As illustrated in the middle of Fig.~\ref{fig:causal-righttop}, where each node represents a column in the structured data, the hierarchical \syic{dependency} graph shows that green nodes denote the two-hop ancestors of $Y$ and blue nodes represent its direct parents.)},
+existing methods either treat all feature embeddings equally by concatenating or averaging them \cite{r:tab}, 
+%%% (done) zj-ic-done: not mentioning GNN
+or utilize only partial representations, such as those from the direct parents of the target variable \cite{r:CASTLE}.
+\syic{These approaches do not explicitly modulate each attribute's contribution according to its dependency distance to the target, potentially failing to fully exploit the dependency hierarchy and consequently degrading prediction performance.}
+A more reasonable approach is to model the hierarchical importance of features based on their positions in the \syic{dependency} DAG structure, where nodes closer to the target \done{(blue nodes)} typically contribute more to the prediction\vldb{~\cite{r:dagsum}.}
+\syic{However, how to define the dependency distance of features in the DAG, and how to combine this distance with feature importance for downstream prediction, remain a significant challenge.}
+%%% (done) zj-ic2-done: last sentence should be: the difficulty of " model the hierarchical importance of features based on their positions" --> should be how to define distance and significance, how to combine distance and significance, etc?
+
+To address the above challenges, we propose \syic{Structure-Guided Hierarchical Analytics (\ourmodel{})}, \syic{a unified framework that transforms the learned stable inter-column dependency structures into two complementary forms of structural guidance: one modulates column-wise self-attention,
+%%% (done) zj-ic2-done: inter-attribute of inter-column? -- consistent ...
+and one guides target-relative hierarchy-aware column aggregation. 
+%%% (done) zj-ic1-done: CAIM introduces a structure-aware hierarchical prediction mechanism that transforms learned attribute dependency representations into two complementary forms of structural guidance for inter-attribute interactions and target-aware aggregation
+%%% (done) zj-ic1-done: Specificlaly, we learn xxx structual through self-supervised ....component; given the knoweldge, we design the xxx component that integrate xxx through two complementary phases --> hard and soft
+Specifically, \ourmodel{} consists of two components. 
+In the Dependency Structure Learning component, a DAG-based inter-column dependency structure is learned via a self-supervised task, regularized by sparsity and acyclicity constraints \zjic{for stable relationships.} 
+In the Structure-Guided Prediction component, 
+%%% (done) zj-ic2-done: give a name for the second component --> In the xxx component,
+the learned structure guides prediction through two complementary phases. 
+First, \syone{the} Causal-Attentive Representation Module exploits the learned dependency matrix as a soft structural prior to modulate column-wise self-attention. 
+Second, the Target-Relative Hierarchy-Aware Aggregation module 
+%%% (done) zj-ic3-done: Target-Relative Hierarchy-Aware Aggregation --> all these terms should be checked
+exploits the dependency hierarchy relative to the target column to derive distance-based aggregation constraints for combining column representations used for the final prediction.}
+%%% (done) zj-ic2-done: check the above? -- column aggregation for the final prediction
+
+\rl{To train the \syic{Dependency Structure Learning} with the \syic{Structure-Guided Prediction} properly, 
+%%% (done) zj-ic2-done: the second module? -- not the Target-Relative Hierarchy-Aware Aggregation module? 
+\ourmodel{} \vldb{is designed with} an alternating optimization strategy. }
+\rl{
+Moreover, given that the dependency extraction is computationally expensive, we design a lazy update mechanism that reduces the frequency of updating while maintaining model performance.
+}
+\vldb{
+Beyond analytics accuracy and efficiency, the learned \syic{dependency} DAG and \syone{causal-inspired attentive} weights capturing inter-column relationships inherently provide interpretability for the prediction results, which is critical for real-world high-stakes structured data applications such as fintech and healthcare.
+}
+%%% zj-v1-done: add one to two sentences for interpretation and also in the DAG tech part + also in the contribution
+
+We summarize our contributions as follows:
+
+\begin{itemize}
+    \item \syic{
+    We propose \ourmodel{}, a unified framework that learns target-conditioned column-level dependency profiles from relational tables and \zjic{integrates them into structured data prediction} through two complementary phases: \zjic{
+    % dependency structure learning and structure-guided prediction. The learned structure then guides prediction through two phases, 
+    modulating \syic{column-wise self-attention and guiding target-relative hierarchy-aware column} aggregation.}
+    }
+    %%% (done) zj-ic2-done: modulating inter-column interactions and target-aware aggregation --> grammar not correct? (1) modulating target-aware aggregation? (2)  aggregation of what?
+    \item \syic{We propose \syic{a self-supervised method} 
+    %%% (done) zj-ic-done: self-supervised?
+    that learns dependency structure, regularized by sparsity and acyclicity constraints. Furthermore, we design a \syone{causal-inspired attentive} mechanism that \syic{exploits} the learned dependency matrix as a structural mask to modulate column-wise self-attention within the prediction model.}
+
+    \item \syic{
+    We design a Target-Relative Hierarchy-Aware Aggregation mechanism that fully exploits the learned dependency hierarchy relative to the target column, with the designed distance-based regularization to differentiate column importance according to their hierarchical distances from the target for improved predictive performance.
+    }
+
+
+    \item \vldb{We develop a novel interpretation mechanism to understand inter-column relationships for prediction via learned \syic{dependency} DAG and \syone{causal-inspired attentive} weights.}
+    
+    \item We propose the efficient lazy update strategy to reduce the computational \sy{cost of \ourmodel{} \syadd{by 35\%} via altering the update frequency of \syic{dependency structure learning}.}
+    
+    \item We conduct extensive experiments on \syic{nine} real-world datasets. The results demonstrate that \ourmodel{} outperforms existing SOTA structured data prediction models in terms of \sy{effectiveness, efficiency, and interpretability}.
+\end{itemize}
+
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=1.0\textwidth]{over1.pdf}
+    \caption{An overview of \ourmodel{}.}
+    \label{fig:overview}
+\end{figure*}
+%%% (done) zj-ic3-done: futther refine the figure
+
+\section{Related Work}
+
+\subsection{Feature Interaction Modeling}
+
+Traditional machine learning methods, such as XGBoost, AutoML \cite{r:xgboost, r:automl}, \syadd{and more recently TabM \cite{r:tabm},} treat features as independent, limiting their ability to capture complex dependencies. To address this, attention-based models have been proposed. TabTransformer \cite{r:tab} introduces self-attention for feature dependencies, FT-Transformer \cite{r:ft-transformer} improves efficiency through feature tokenization, SAINT \cite{r:SAINT} incorporates inter-sample attention\syadd{, and Orion-Bix \cite{r:orionbix} leverages bidirectional cross‑attention for hierarchical interactions.}
+Meanwhile, graph-based methods such as TabGNN \cite{r:gnnbased} explicitly model inter-column relationships via graph structures. 
+\syic{More recently, pre-trained tabular foundation models, such as TabPFN~\cite{r:tabpfn} and XTab~\cite{r:xtab}, leverage large-scale pre-training to perform zero-shot or few-shot prediction on unseen structured data.}
+However, these models are mainly data-driven and prone to capturing spurious dependencies.
+
+\subsection{\syic{Relational Data Profiling}}
+
+\syic{Relational data profiling aims to characterize the structural properties of relational tables, including column statistics, correlations, and integrity dependencies. CORDS~\cite{r:cords} discovers statistical correlations between column pairs, while HyFD~\cite{r:hyfd} and TANE~\cite{r:tane} mine functional dependencies from relational tables. However, these profiling techniques are offline tools not integrated into downstream prediction, limiting their effectiveness.}
+
+
+\subsection{\syic{Causal Analysis Integration}}
+
+% \syic{For causal-based methods, LogCause \cite{r:linear} extracts causal relationships via statistical methods and incorporates them as regularization. CASTLE \cite{r:CASTLE} incorporates a learned causal graph into the input-layer connectivity of a predictive model.
+%%% (done) zj-ic3-done: jointly, end-to-end --> as if castle is very good ...
+% LLM-CD \cite{r:llmcd} combines LLM reasoning with a causal discovery algorithm. However, these methods usually treat the learned structure as auxiliary information or constrain input-layer connectivity, limiting their ability to fully exploit inter-column dependencies.}
+\syic{For causal-based methods,} LogCause \cite{r:linear} extracts causal relationships via statistical methods and incorporates them as regularization, \syic{rather than using them to modulate task-specific feature interactions}. \zjic{CASTLE \cite{r:CASTLE} learns causal graphs and uses them to constrain input-layer connectivity.} 
+LLM-CD \cite{r:llmcd} combines LLM reasoning with a basic causal discovery algorithm based on conditional independence tests, but \syic{follows a two-stage pipeline that uses discovered causal knowledge as auxiliary information rather than integrating it into predictive computations}.
+\vldb{Consequently,} existing causal methods are limited by \vldb{downstream prediction model architectures}, restricting their ability to extract complex causal relationships.
+% %%% (done) zj-ic2-done: not "simple models"
+% \vldb{Our proposed \ourmodel{} integrates \syic{causal-aware dependency} modeling with the expressive capacity of downstream high-capacity models,} 
+% enabling stable extraction of \syic{causal-aware inter-column dependencies} for robust \vldb{predictive analytics}.
+
+\section{Problem Formulation}
+
+\sy{
+Given a \syic{relational} table $T = \{(x_1, x_2, \dots, x_n, y)_i \mid i = 1, 2, \dots, I\}$, where \syic{each of the} $I$ samples consists of $n$ feature columns~\syic{(attributes)} and a \syic{target column} $y$. 
+\syfix{The} goal is to train a predictive function $f: \mathbf{x} \to y$\syic{, while learning a DAG-form inter-column dependency structure to characterize the relationships among columns in the relational table.}
+\syic{This structure, from the perspective of relational data profiling, constitutes a target-conditioned column-level dependency profile that captures the strength, organization, and target proximity of inter-column dependencies, thereby guiding prediction.}
+\syic{The learning} objective aims to minimize the error between the predicted $\hat{y}$ and the ground truth $y$, 
+\zjic{requiring the model to capture the dependencies among columns through the learned dependency structure.
+}
+}
+% inherent in high-dimensional and sparse structured data\syic{, and leverage the  to guide relational table prediction}.}
+%%% (done) zj-ic-done: empasize the DAG explictly? (need or not?)
+
+%%% (done) zj-ic3-done: move the profile to the middle, need to be smooth
+
+\section{Methodology}
+
+%%%  (done) zj-ic1-done: to integrate into (soft and hard ), we need to consider (1) extract stable and downstream-oriented relationships (2) integrate 
+%%% (done) zj-ic1-done: intuition for causal --> stable; intuition for downstream tasks oriented
+%%% (done) zj-ic1-done: intition for the hard and soft --> why two complementary ways???
+% \vldb{In modern structured data analytics tasks, analysts often need to understand how attributes (columns) depend on one another. Traditional database techniques (e.g., correlation analysis, functional dependency mining) and recent high-capacity neural models capture statistical associations \syic{among columns}, yet these data-driven approaches often include spurious correlations \syic{that are} unstable across data distributions and hinder generalization.} \syic{Causal analysis has shown that causal relationships are more robust and invariant across settings \cite{r:causalitydb}, which motivates learning a causal-inspired inter-column dependency structure.} \syic{However, how to extract stable and downstream-oriented inter-column relationships from observational structured data, and how to integrate them into an end-to-end differentiable model so that they effectively participate in training and final prediction, pose great challenges.}
+
+% Our main idea is that existing methods fail to integrate causal analysis with high-capacity models, resulting in suboptimal performance in both causal discovery and prediction. 
+% To address this limitation, 
+% we propose \ourmodel{}, which 
+% Thus, our main idea is to combine an expressive neural architecture with causal learning for robust structured data prediction.
+% to bridge causal structural reasoning for structured data prediction.
+
+\syic{
+\zjic{To incorporate structural knowledge into prediction, 
+% we inject the learned causal knowledge in two complementary ways. 
+we need to learn the knowledge and inject it into the model. 
+}
+Accordingly, our method consists of two components. In the Dependency Structure Learning component, since each feature depends on other features as its conditional dependency,
+%%% (done) zj-ic3-done: learned parents? --> conditioned xxx?
+we design a self-supervised reconstruction task (Section~\ref{sec:causal_extraction}) that predicts each column from the others, thereby recovering the conditional dependencies among columns (upper-right part of Fig.~\ref{fig:overview}); sparsity and acyclicity constraints keep the recovered structure sparse and useful for downstream prediction. \syone{We refer to this learned structure as a dependency matrix.}
+In the Structure-Guided Prediction component, the learned structure guides downstream prediction through two complementary phases. First, since self-attention already captures data-driven inter-column relationships that may include spurious associations, we design the Causal-Attentive Representation Module (Section~\ref{sec:causal_attentive}) to inject the learned dependency matrix as a soft prior into self-attention, thereby suppressing spurious links and emphasizing causally meaningful interactions (center of Fig.~\ref{fig:overview}). 
+Second, since the dependency structure is inherently hierarchical and features closer to the target are generally more important for downstream prediction, we design the Target-Relative Hierarchy-Aware Aggregation (Section~\ref{sec:causal_hierarchy_prediction}) to convert each feature's dependency distance to the target into its importance weight, encouraging causally closer features to exert greater influence while still allowing distant features to contribute (lower-right part of Fig.~\ref{fig:overview}).}
+\zjic{Overall, the dependency matrix encodes the strength of inter-column dependencies, \syone{from which a} DAG captures the dependency organization, and the target-relative distances locate each column with respect to the prediction target. Together, they form a target-conditioned column-level dependency profile guiding inter-column attention and representation aggregation.}
+%%% (done) zj-ic3: zj: check the whole intuition paragraph
+
+
+\subsection{Preprocessing Module}
+\rlend{
+For structured data with $n$ columns, the input is represented as $\mathbf{S} = [x_1, \ldots, x_n, y] \in \mathbb{R}^{(n+1)}$. 
+\syfix{
+% For a classification or regression task on structured data with $n$ features, this input vector serves as the base representation. 
+A \texttt{[msk]} token is used to replace the column to be predicted.}
+After that, the resulting vector $\mathbf{S}' \in \mathbb{R}^{n+1}$ is transformed into an embedding matrix $E = [\mathbf{e}_1, \dots, \mathbf{e}_{n+1}]$, where each $\mathbf{e}_i \in \mathbb{R}^{d_e}$. 
+Specifically, categorical columns are mapped via embedding lookup, where each column $i$ has an embedding matrix $E_i \in \mathbb{R}^{m_i \times d_e}$ ($m_i$ is the count of category values). 
+% \syadd{This ensures that each category in each field has its own unique embedding.}
+Numerical columns are transformed via $e_j = x_j \cdot \mathbf{e}^0_j$, where $x_j$ is the standardized \syadd{(zero-mean, unit-variance)} input value and $\mathbf{e}^0_j \in \mathbb{R}^{d_e}$ is a learnable base embedding. 
+% \syadd{This design preserves the multiplicative nature of numerical values.}
+\syadd{This linear projection design is commonly adopted in structured data deep learning\cite{r:armnet, r:autoint, r:ft-transformer}, as it preserves both the scalar magnitude of numerical values and the field-specific semantics of each column.
+}
+\syadd{The \texttt{[msk]} token is mapped to a shared embedding $e_{msk}$.}
+% Through this process, the input vector is transformed into an embedding matrix $\mathbf{E} = [\mathbf{e}_1, \ldots, \mathbf{e}_{n+1}]$, where each $\mathbf{e}_i \in \mathbb{R}^{d_e}$ represents the embedding of the $i$-th field.
+}
+
+\subsection{\syone{NPSEM-Inspired Structural Prior}}\label{sec:causal_theory}
+
+\sytwo{\ourmodel{}} is \zj{motivated by} the \zjic{causal analysis}~\syic{Nonparametric Structural Equation Model (NPSEM) modeling 
+%%%  (done) zj-ic2-done: full name for NPSEM
+% which emphasizes the use of directed, sparse, and acyclic dependency structures
+}~\cite{r:pearl2009,r:peters2017}.
+% \syadd{This is a well-justified assumption in causal inference\cite{r:pearl2009,r:peters2017}.}
+In this \syic{framework}, features $\mathbf{X}$ and the target $y$ form a DAG $G = (V, E)$, where each $v \in V$ corresponds to a column \sytwo{(including both features and the target)} and edge $\langle u, v \rangle \in E$ indicates a \syic{directed dependency from $u$ to $v$}. 
+\syic{The dependency structure is characterized by acyclicity and an explicit sparsity assumption,}
+%%%  (done) zj-ic2-done: the below sentence is duplicated with the above one?
+\syic{and follows the NPSEM structural equation \cite{r:pearl2009}, where each non-root node is generated from its parent variables}:
+\begin{equation}
+    v_i = f_i(\mathrm{Pa}(v_i), \epsilon_i), \quad i \in [n+1]
+    \label{eq:structural-eq}
+\end{equation}
+where $\mathrm{Pa}(v_i)$ denotes the \syic{parent variables}, $\epsilon_i$ is an \syic{independent noise} term, and $f_i$ any nonlinear function.
+
+\rln{
+In our design, \syic{a learnable dependency matrix parameterizes the DAG-form structure and is} \syic{integrated} into the attentive mechanism of the model to \syic{guide inter-column interactions}, \syend{as detailed }in \vldb{the Causal-Attentive Representation Module (Section~\ref{sec:causal_attentive}).}
+% \icde{It is worth noting that our primary objective is not necessarily strict causal discovery, but rather leveraging causal structure to improve predictive performance on downstream structured data analytics tasks.}
+Moreover, the design of the \syic{Causal-Inspired Dependency Structure Learning} (Section~\ref{sec:causal_extraction}) follows this NPSEM perspective.
+% rather than directly identifying the true causal parent sets.
+\zjic{
+Additionally, acyclicity prevents circular dependencies, ensuring that the learned relationships follow a consistent generation order rather than forming contradictory dependency cycles.
+}
+%%% (done) zj-ic-done: Acyclicity --> can add some more intuitions?
+\zjic{
+Sparsity further encourages a compact structure by removing unnecessary connections, since not every pair of columns needs to be directly related. 
+}
+}
+
+
+% \syic{The NPSEM formulation provides useful inspiration for modeling inter-column dependencies in structured data. Specifically, reconstruction encourages the learning of conditional predictive dependencies between columns. 
+% Acyclicity prevents circular dependencies, ensuring that the learned relationships follow a consistent generation order rather than forming contradictory dependency cycles.
+% Sparsity further encourages a compact structure by removing unnecessary connections, since not every pair of columns needs to be directly related. These principles motivate our causal-inspired dependency learning framework.}
+
+\subsection{Causal-Attentive Representation Module}\label{sec:causal_attentive}
+
+\rlend{For structured data, attention-based mechanisms serve as the core module in many modern architectures for capturing inter-column dependencies\cite{r:autoint, r:tabm}, but the learned attention scores may include spurious associations.} \rln{To address this, we first devise a learnable causal matrix (Section~\ref{sec:causal_mask_gen}), 
+and then integrate it with the self-attention mechanism to rectify spurious associations (Section~\ref{sec:causal_attn_block}). }\syend{ The detailed structure of this module is illustrated in Fig.~\ref{fig:overview}B.}
+
+\subsubsection{Causal Mask Generator}\label{sec:causal_mask_gen}
+
+\syadd{To model the \syic{conditional dependencies} among \syfix{features}, we design a mask generator with a set of learnable parameters
+and a function 
+that \syne{maps} to a directed acyclic graph (DAG) % matrix representing 
+of \syic{dependencies}.
+Specifically, we define} \rl{a learnable causal matrix} $C \in \mathbb{R}^{(n+1) \times (n+1)}$, 
+where each entry $C_{i,j}$ represents the strength of the directed edge from node $j$ to node $i$ in the \syic{dependency} graph.
+\done{This directed matrix models the potential \syic{directed dependencies} among \syfix{features}, allowing the model to capture both the hierarchical (direct and indirect) dependencies and the directionality of their relationships.
+}
+To transform the continuous weights in $C$ into a usable causal mask, \syend{we exploit an element-wise sigmoid function, defined as $M = \text{Sigmoid}(C)$. \syic{The resulting $M \in [0,1]^{(n+1)\times(n+1)}$ is a causal-inspired soft dependency matrix (a soft mask), where} each entry $M_{i,j}$ represents the strength of the directed dependency from column $j$ to column $i$, and a higher value indicates a stronger \syic{dependency} in that direction.}
+\icde{In the early stage of training, the causal mask is dense, exerting a weak modulating effect} \vldb{such that the model approximates standard attention. As training proceeds, the mask becomes sparse and introduces stronger \syic{structural} constraints. The learned $M$ reveals inter-column \syic{dependencies}, offering interpretability for the underlying predictions.}
+
+\subsubsection{\vldb{Causal-Aware} Attention Block
+}\label{sec:causal_attn_block}
+
+\sydesi{
+Given the designed causal mask, we aim to incorporate its \syic{dependency structure} knowledge into the column learning process. 
+To this end, we design the \vldb{Causal-Aware} Attention block.
+\rl{First, the embedding matrix $E \in \mathbb{R}^{(n+1) \times d_e}$ is projected into query ($Q$), key ($K$), and value ($V$) matrices, yielding raw attention scores $\text{Attention}_{h} = \text{Softmax}(\frac{Q_h K_h^\top}{\sqrt{d_k}})$.}
+}
+\sydesi{However, raw attention scores capture statistical associations, which may include spurious links. 
+We integrate the \syic{dependency} DAG by elementwise multiplying the attention weights with the causal mask $M$:}
+\begin{equation}
+    \text{FixedAttention}_h = \text{Attention}_h \odot M
+    \label{eq:masked-attn}
+\end{equation}
+This multiplicative operation integrates \syic{structural} priors into the attention mechanism, \sydesi{allowing each column to \syone{emphasize} its \syic{structurally relevant} predecessors. Consequently, this design emphasizes }\syic{structurally meaningful} dependencies.
+\icde{
+Note that downstream features can still be highly informative, which motivates our design of multiplicative soft masking rather than hard pruning: multiplication does not fully mask out the original attention but reweights it to enhance \syic{relevant} predecessors, thereby allowing the model to leverage both upstream and downstream information.
+% We acknowledge that in a single training distribution, downstream variables can still be highly informative. 
+If a direction has a strong response in either the causal mask or the attention, their product remains large, and thus information is not discarded.
+}
+
+The output of each attention head is computed as:
+\begin{equation}
+    \text{Attended}_h = \text{FixedAttention}_h \cdot V_h
+    \label{eq:attended-head}
+\end{equation}
+\syadd{The causal mask M is shared across all attention heads and layers. This design choice stems from the fact that the \syic{dependency} graph captures a global, intrinsic data-generating mechanism among \syfix{features}, which is independent of specific heads or layers. Although different heads learn diverse representations through their projection matrices (Q, K, V), the underlying \syic{dependencies} must be respected by all heads. Hence, sharing the mask does not restrict representational diversity; each head can still capture distinct feature interaction patterns while adhering to the same \syic{structural} constraints.}
+
+\rlend{
+The outputs from all heads are then concatenated and passed through an output projection: \syadd{
+\begin{equation}
+    \textit{Attended} = \text{Concat}_{h=1}^{n_h}(\textit{Attended}_h) W_O
+    \label{eq:concat-proj}
+\end{equation}}
+where $W_O \in \mathbb{R}^{d_e \times d_e}$ is a projection matrix. Finally, the result goes through residual connections and layer normalization, yielding the \syone{causal-inspired attentive} representation $H \in \mathbb{R}^{(n+1) \times d_e}$.
+}
+
+\sy{The transformation from the embedding matrix $E$ to the latent representation is denoted as $\Phi(\cdot)$\syend{, with $H^{(i)}$ representing the output of }the $i$-th representation module. After passing through $N$ modules, \syadd{where $N$ denotes the number of stacked attention blocks,} we obtain the \syone{causal-inspired attentive} representation $H \in \mathbb{R}^{(n+1) \times d_e}$ \syend{via the composition}} \syadd{:
+\begin{equation}
+    H = \Phi_N \circ \cdots \circ \Phi_1(E)
+    \label{eq:final-composition}
+\end{equation}}
+
+\subsection{\syic{Causal-Inspired Dependency Structure Learning}}\label{sec:causal_extraction}
+\syic{Following the NPSEM-inspired view, each \syadd{variable} (including features and \syone{the target}) can be characterized through its dependencies on other variables.}
+\rln{This insight guides the optimization of the learnable \syic{dependency matrix (soft mask)} $M$: by learning to predict each \syadd{feature} from \syic{the others, we can learn predictive dependencies} and thus optimize the \syic{mask $M$}. Based on this insight, we design the \syic{Causal-Inspired Dependency Structure Learning} with a reconstruction task. }
+\syadd{
+Specifically, \eqref{eq:structural-eq} \syic{characterizes each variable through its dependencies on other variables, and 
+reconstruction realizes \eqref{eq:structural-eq} by predicting each column from the others. }
+} 
+To this end, a random column is \sytwo{replaced with a $[msk]$ token to generate a masked vector $S'$, which is mapped to an embedding matrix $E$ where the $[msk]$ token is represented by a learnable embedding $\mathbf{e}_{msk}$. The} task is to predict the masked input $s_i$ using the aggregated representation $H_i$ from the remaining columns.
+
+\syfix{
+Recall that \eqref{eq:attended-head} defines the per-head output as a matrix product.
+For each \syone{output} position $i$, the $i$-th row of this output is a weighted sum over all source positions $j$:
+\begin{equation}
+    \text{Attended}_h[i] = \sum_{j=1}^{n+1} \text{FixedAttention}_h[i,j] \cdot V_h[j]
+    \label{eq:causal-decomposition}
+\end{equation}
+where $\text{FixedAttention}_h[i,j]$ is the causal-masked attention weight from column $j$ to column $i$ in head $h$, which reflects the strength of the edge $\langle j, i \rangle$ in the learned \syic{dependency} DAG.
+After multi-head concatenation and a residual connection, we denote the \syone{causal-inspired attentive} representation of column $i$ as $H_i$.} 
+
+\syic{These structural constraints are detailed in the following sections, and the overall structure is illustrated in Fig.~\ref{fig:subfig1}.}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1.0\columnwidth]{subfig1.pdf}
+    \caption{Overview of the \syic{Causal-Inspired Dependency Structure Learning}.}
+    \label{fig:subfig1}
+\end{figure}
+
+\subsubsection{Reconstruction Task}
+Given the masked column's representation $H_i$, \syend{the value} $s_i$ is reconstructed via a feed-forward network \syend{as $\hat{s}_i = \text{FNN}(H_i)$.} 
+\syfix{The intuition is that this reconstruction task\syic{, inspired by the NPSEM variable-level view, learns predictive dependencies among variables} by predicting each variable from the others. Minimizing the reconstruction error under sparsity and acyclicity constraints}
+%makes the causal DAG identifiable, thus implementing the NPSEM formulation.
+\syic{encourages the learned structure to satisfy the DAG form assumed in NPSEM.}
+The final reconstruction loss is the Cross-Entropy or MSE between the predicted value $\hat{s}_i$ and the ground truth $s_i$, depending on whether the column is categorical or numerical. To balance the scale discrepancy between categorical and numerical variables, 
+we introduce a weighting $\eta$ to ensure fair training:\syne{
+\begin{equation}
+    \mathcal{L}_{\text{rec}} =
+    \begin{cases}
+    \eta \cdot \|\hat{s}_i - s_i\|_2^2, & \text{if } \delta_i = 0 \\
+    -\log \hat{s}_i[s_i], & \text{if } \delta_i = 1
+    \end{cases}
+    \label{eq:reconstruction-loss}
+\end{equation}}
+where $\delta_i=1$ indicates a categorical variable and $\delta_i=0$ indicates a numerical variable.
+
+\subsubsection{\syic{Structural} Constraints}
+\rl{To enforce that the learned causal matrix satisfies the \syic{dependency} DAG structure assumed in NPSEM, we introduce two structural constraints: an \sy{acyclicity loss} \syone{encouraging a sparse and} acyclic structure, and a sparsity loss encouraging sparse \syic{parent} identification.}
+
+\paragraph{Acyclicity(DAG) Loss}
+The \sy{acyclicity loss} penalizes the cycle in the Causal Mask $M$, which is designed as:
+
+\begin{equation}
+    \mathcal{L}_{\text{DAG}} = \mathrm{tr}(e^M) - (n+1)
+    \label{eq:dag-loss}
+\end{equation}
+Since the matrix exponential can be expanded as a power series: $e^M = I + M + \frac{1}{2!}M^2 + \cdots$, the trace term $\mathrm{tr}(e^M)$ can then be rewritten as $\mathrm{tr}(I) + \mathrm{tr}(M) + \mathrm{tr}(\frac{1}{2!}M^2) + \cdots$, where $\mathrm{tr}(M^k)$ \syic{captures the contributions from weighted closed walks} of length $k$ in the graph. 
+Therefore, any cycle in the graph will contribute a positive value to $\mathcal{L}_{\text{DAG}}$, making it an effective regularizer to enforce the DAG constraint.
+
+\paragraph{Sparsity Loss}
+To promote a sparse \syic{dependency} graph and encourage clear identification of root-level features (i.e., variables with few or no parents), we add a group-Lasso penalty on the rows of \syne{the soft causal mask $M$} (which correspond to in-degrees):
+\begin{equation}
+    \mathcal{L}_{\text{sparse}} = \sum_{i=1}^{n+1} \|M_{i, :}\|_2
+    \label{eq:sparsity-loss}
+\end{equation}
+This structured sparsity mechanism helps drive some rows entirely to zero, effectively \syic{identifying variables with no incoming edges and thereby} promoting the detection of root nodes in the DAG.
+
+\subsubsection{Overall Loss for \syic{Causal-Inspired Dependency Structure Learning}}
+The total loss of the \syic{Causal-Inspired Dependency Structure Learning} is:
+\begin{equation}
+    \mathcal{L_{R}} = \alpha\mathcal{L}_{\text{rec}} + \beta(\mathcal{L}_{\text{DAG}} + \mathcal{L}_{\text{sparse}})
+    \label{eq:total_reconstruction_loss}
+\end{equation}
+where $\alpha$ and $\beta$ are hyperparameters \syone{that} balance the reconstruction task with the regularization terms.
+
+\subsection{\syic{Target-Relative Hierarchy-Aware Aggregation}}
+\label{sec:causal_hierarchy_prediction}
+
+\rlend{
+Through the \syic{Causal-Inspired Dependency Structure Learning}, we learn
+%the causal DAG 
+\syic{a conditional dependency graph, i.e., a sparse DAG over inter-column relationships} defining the hierarchical structure among variables, and obtain hidden representations $H$ for each column. 
+Traditional aggregation methods (e.g., concatenation or averaging) ignore this hierarchical structure and \syne{do} not fully utilize the extracted hierarchical \syic{dependency} DAG knowledge. 
+% \syadd{To fully exploit this causal knowledge to mine significant structural patterns for downstream prediction,} 
+To this end, we design a hierarchy-aware weighting mechanism that bridges structural reasoning and feature fusion.} \syadd{The overall structure is illustrated in Fig.~\ref{fig:subfig2}.}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1.0\columnwidth]{subfig2.pdf}
+    \caption{Overview of the \syic{Target-Relative Hierarchy-Aware Aggregation}.}
+    \label{fig:subfig2}
+\end{figure}
+
+
+\subsubsection{Predictor Architecture}
+\rlend{
+The predictor aggregates each row of the input $H \in \mathbb{R}^{(n+1) \times d_e}$ into a global representation $h_{\text{pred}}$ using learnable weights $\{a_1, a_2, \dots, a_{n+1}\}$. 
+Note that $H$ is computed with the target $y$ replaced by the $[msk]$ token, and its embedding $\mathbf{e}_{n+1}$ is the shared learnable embedding $\mathbf{e}_{msk}$. The global representation is calculated as:
+\begin{equation}
+    h_{\text{pred}} = \sum_{i=1}^{n+1} a_i h_i
+    \label{eq:h_pred}
+\end{equation}
+}
+
+
+$h_{\text{pred}}$ is fed into a feedforward neural network to produce the prediction: $\hat{y} = \text{FNN}(h_{\text{pred}})$.
+The prediction loss $\mathcal{L}_{\text{pred}}$ depends on task type (regression or classification), and is defined as:
+\begin{equation}
+    \mathcal{L}_{\text{pred}} =
+    \begin{cases}
+    \| \hat{y} - y \|_2^2, & \text{for regression tasks} \\
+    -\log \hat{y}[y], & \text{for classification tasks}
+    \end{cases}
+    \label{eq:pred_loss}
+\end{equation}
+
+\syfix{
+The weight $a_i$ in \eqref{eq:h_pred} is crucial as it measures the importance of column $i$. 
+We argue that this importance is inherently related to the \syic{structural} distance from each feature to the target $y$. 
+In the following, we first compute the distance $d_i$ from the learned DAG, and then design a distance-aware regularization that down-weights features with larger $d_i$.
+}
+
+\subsubsection{\syic{Dependency Distance} Extraction}
+\syadd{
+\zjic{We binarize the learned} \syic{continuous dependency} matrix $M$ into the adjacency matrix $T$
+% \syic{which is the thresholded DAG,} by applying a threshold of $0.5$.
+%%% (done) zj-ic2-done: maybe not mentioning the 0.5 in the main text
+%: $T_{i,j} = 1$ if $M_{i,j} > 0.5$, otherwise $0$. 
+which ensures that only confident dependencies are retained for hierarchy-aware prediction.
+}
+\syic{From a relational profiling perspective, $M$ provides a continuous representation of column-level dependencies, while the thresholded graph $T$ offers a discrete structural view.}
+Then, to extract the distance from each node to the label node $y$, we leverage matrix exponentiation. Specifically, the $k$-th power $T^k[n+1, :]$ encodes the number of paths of length $k$ from any node to $y$. If $T^k[n+1, i] > 0$, it implies that node $i$ can reach $y$ in exactly $k$ steps. Using this property, we construct a distance vector $d \in \mathbb{R}^{n+1}$, where each entry $d_i$ represents the path length from node $i$ to $y$ in the DAG:
+\begin{equation}
+    d_i = 
+    \begin{cases}
+    \min\{k \mid T^k[n+1, i] > 0\}, & \text{if such } k \text{ exists} \\
+    D_{\max}, & \text{otherwise}
+    \end{cases}
+    \label{eq:distance_matrix}
+\end{equation}
+\noindent
+Here, $D_{\max}$ is a large constant assigned to nodes that are not ancestors of $y$ (e.g., descendants or unrelated nodes), \syic{which is chosen larger than the distance of any reachable (ancestor) node}. % \syadd{Under the NPSEM assumption, direct causes are the primary drivers of the target, and the shortest-path distance naturally captures this causal hierarchy.} 
+\syic{As a special case, the target node itself is assigned distance $d_{n+1} = 0$, corresponding to a zero-length path; its aggregation weight $a_{n+1}$ is thus not penalized.}
+This distance-aware representation enables subsequent modules to focus more on nodes that are \syic{closer to the label in the dependency DAG. The target-relative distance $d$ further enriches the dependency profile by characterizing each column's structural proximity to the prediction target.}
+
+\subsubsection{Distance-aware Regularization}
+\label{sec:reg}
+
+\icde{
+A feature's \syic{structural} distance to the target reflects its importance: distance 1 corresponds to \syic{direct parents}, and larger distances to indirect ones. 
+As importance naturally decays with distance\cite{r:pearl2009,r:peters2017}, which is consistent with prior work prioritizing direct parents\cite{r:CASTLE,r:linear}, 
+the distance thus captures this hierarchical structure, i.e., features \syic{structurally} closer to the target are more prediction-relevant.
+}
+Consequently, given the computed distance vector $d \in \mathbb{R}^{n+1}$, we introduce a distance-aware regularization term to \syadd{align the predictor weights with the \syic{dependency} hierarchy.} 
+We modify the weight decay strength on the predictor coefficients $\{a_1, \dots, a_{n+1}\}$ by incorporating the \syic{structural} distances. The regularization term is defined as:
+\begin{equation}
+    \mathcal{L}_{\text{dis}} = \sum_{i=1}^{n+1} \lambda d_i a_i^2
+    \label{eq:distance_regularization}
+\end{equation}
+
+\noindent
+where $\lambda$ is the original weight decay strength. 
+\syadd{
+We do not evaluate \syfix{predictive importance} only with \syic{structural} distance, nor restrict the predictor to use only direct parents. 
+Equation~\eqref{eq:distance_regularization} implements a soft regularization: features with larger \syic{structural} distance are down-weighted but never forced to zero. 
+The hyperparameter $\lambda$ controls regularization strength. 
+% When $\lambda = 0$, all features are treated equally, recovering data-driven aggregation. 
+% This preserves flexibility to exploit distant signals while encouraging prioritization of \syic{structurally} closer features.
+}
+
+\subsubsection{Overall Loss for Prediction \kdd{module}}
+In the \syic{prediction} module, the overall loss is:
+\begin{equation}
+    \mathcal{L}_{P} = \mathcal{L}_{\text{pred}} + \mathcal{L}_{\text{dis}}
+    \label{eq:total_prediction_loss}
+\end{equation}
+
+\subsection{Optimization for \ourmodel{}}
+\rlend{
+For the \ourmodel{} model, there are two sets of parameters to optimize: the causal matrix $C$ (\syic{Dependency Structure Learning}) and the predictor weights $a_i$ (\syic{Target-Relative Hierarchy-Aware Aggregation}). 
+According to Equations~\ref{eq:distance_matrix} and \ref{eq:distance_regularization}, the optimization of $a_i$ depends on the $C$
+\syfix{
+which defines the soft mask $M$ binarized to obtain the adjacency matrix $T$. 
+The distance $d_i$ is then computed from $T$ and controls $a_i$ via regularization.
+} 
+Therefore, we propose to update these two sets of related parameters in an alternating manner.
+}
+% \syadd{through the \syic{Causal-Inspired Dependency Structure Learning} and the \syic{Target-Relative Hierarchy-Aware Aggregation}, respectively. 
+\syadd{
+In this section, we detail the optimization steps and introduce a Lazy Update strategy designed to improve training efficiency.
+}
+
+\subsubsection{Alternating Optimization Strategy}
+In each iteration, we first update the \syic{Dependency Structure Learning} using loss $\mathcal{L}_R$ (Equation~\eqref{eq:total_reconstruction_loss}), which optimizes the causal matrix $C$ to learn a valid and sparse \syic{dependency} DAG. 
+Subsequently, we update the prediction module using loss $\mathcal{L}_P$ (Equation~\eqref{eq:total_prediction_loss}), which optimizes the predictor weights $a_i$.  
+\syadd{This alternating process enables the model to simultaneously improve feature reconstruction and predictive performance.}
+\icde{
+The updates of both $\mathcal{L}_R$ and $\mathcal{L}_P$ are within a unified alternating framework, optimized via stochastic gradient procedures.
+% This preserves the convergence property of the overall alternating algorithm. 
+}
+
+\subsubsection{Lazy Update}
+
+\syadd{Updating the \syic{Dependency Structure Learning} can be time-consuming due to the need to compute \syfix{acyclicity} loss. 
+\syfix{
+However, we observe that after the first few epochs, the causal matrix $C$ and the associated acyclicity loss change gradually, so they do not need to be updated at every mini-batch.} 
+To reduce the computational cost, we propose a lazy update strategy which reduces the frequency of updating the costly \syic{Dependency Structure Learning}.} 
+\vldb{The procedure is illustrated in Algorithm~\ref{alg:lazy_update}.}
+\syadd{Let $C$ denote the parameters related to the causal mask, \syfix{$a_i$ denote the predictor weights}, 
+and $\Theta$ \syne{represent} all other model parameters.
+$T_s$ is the number of mini-batches used for updating the \syic{Dependency Structure Learning}, and $T_c$ is the cycle length.} 
+For every \syadd{$T_c$} mini-batches, the first $T_s$ are used to update the \syic{Dependency Structure Learning} \vldb{ (lines \syone{10}--12)}, while the remaining \syadd{$T_c - T_s$} update the \syadd{hierarchy-aware} prediction module \vldb{(lines 14--\syone{16})}. 
+A smaller \syadd{$T_s/T_c$} reduces training time but may lower performance. Empirically, we set $T_s=2$ and \syadd{$T_c=10$}.
+
+\begin{algorithm}[h]
+    \caption{Lazy \vldb{Update} of \ourmodel{}}
+    \label{alg:lazy_update}
+    \begin{algorithmic}[1]
+        \STATE \textbf{Input}: training data $\mathcal{D}$, causal \syone{matrix} $C$, predictor weights $a_i$, other parameters $\Theta$, update steps $T_s$, cycle length $T_c$
+        \STATE \textbf{Output}: trained \ourmodel{} model
+        \STATE Initialize iteration counter $t \leftarrow 0$
+        \FOR{each mini-batch $B \in \mathcal{D}$}
+            \STATE Embed each sample $\mathbf{S}$ into $\mathbf{E}$ as described in the \textit{Preprocessing module}
+            \STATE \syone{Select the token to mask: the target $y$ if $t \bmod T_c \ge T_s$, otherwise a random column}
+            \STATE \syone{Replace the selected token in $B$ with \texttt{[msk]}}
+            \STATE Compute hidden representations $H$ via \eqref{eq:masked-attn}--\eqref{eq:final-composition}
+            \IF{$t \bmod T_c < T_s$}
+                \STATE /*\syic{Dependency Structure Learning}*/
+                %%% (done) zj-ic2-done: capital or not capital, consistent with "Target-Relative Hierarchy-Aware Aggregation"
+                \STATE Compute reconstruction objective $\mathcal{L}_R \leftarrow \alpha \mathcal{L}_{\text{rec}} + \beta(\mathcal{L}_{\text{DAG}} + \mathcal{L}_{\text{sparse}})$
+                \STATE Update $C$ and $\Theta$ by minimizing $\mathcal{L}_R$
+            \ELSE
+                \STATE /*\syic{Target-Relative Hierarchy-Aware Aggregation}*/
+                \STATE Compute prediction objective $\mathcal{L}_P \leftarrow \mathcal{L}_{\text{pred}} + \mathcal{L}_{\text{dis}}$
+                \STATE Update $a_i$ and $\Theta$ by minimizing $\mathcal{L}_P$
+            \ENDIF
+            \STATE $t \leftarrow t + 1$
+        \ENDFOR
+        \STATE \textbf{return} trained \ourmodel{} model
+    \end{algorithmic}
+\end{algorithm}
+
+\begin{table*}
+    \caption{Performance Comparison on Real-World Applications}
+    \label{tab:model_comparison}
+    \centering
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{l l c c c c c c c c c c c c c c}
+      \toprule
+      Dataset & Metric & XGBoost & AutoML & \syadd{TabM} & FT-Trans & Tab-Trans & SAINT & \syadd{Orion-Bix} & \syic{TabPFN} & \syic{XTab} & TabGNN & CASTLE & LogCause & \syfix{LLM-CD} & \ourmodel{} \\
+      \midrule
+      CreditCard
+        & AUC (\%)
+        & \syne{97.88$\pm$0.04}
+        & \syne{97.81$\pm$0.04}
+        & \syne{98.10$\pm$0.04}
+        & \syne{98.17$\pm$0.03}
+        & \syfix{97.48$\pm$0.04}
+        & \syne{97.98$\pm$0.03}
+        & \syne{97.78$\pm$0.05}
+        & \syic{98.36$\pm$0.03}
+        & \syic{98.29$\pm$0.03}
+        & \syne{98.14$\pm$0.03}
+        & 95.80$\pm$0.08
+        & 96.48$\pm$0.05
+        & \syfix{97.26$\pm$0.05}
+        & \textbf{98.62$\pm$0.02} \\
+      Cardiovascular
+        & AUC (\%)
+        & \syne{78.96$\pm$0.01}
+        & \syne{78.90$\pm$0.01}
+        & \syne{79.03$\pm$0.02}
+        & \syne{79.05$\pm$0.02}
+        & \syne{79.02$\pm$0.02}
+        & \syne{79.05$\pm$0.02}
+        & \syne{78.94$\pm$0.03}
+        & \syic{79.09$\pm$0.02}
+        & \syic{79.04$\pm$0.02}
+        & \sydesi{77.21$\pm$0.02}
+        & \syfix{78.35$\pm$0.04}
+        & 77.62$\pm$0.03
+        & \syne{78.61$\pm$0.03}
+        & \syadd{\textbf{79.37$\pm$0.02}} \\
+      Adult
+        & AUC (\%)
+        & \syfix{90.57$\pm$0.04}
+        & \syfix{90.55$\pm$0.06}
+        & \syne{90.93$\pm$0.05}
+        & \syfix{90.97$\pm$0.04}
+        & \syfix{90.47$\pm$0.06}
+        & \syfix{90.94$\pm$0.05}
+        & \syfix{90.49$\pm$0.06}
+        & \syic{90.99$\pm$0.03}
+        & \syic{90.96$\pm$0.03}
+        & \sydesi{89.50$\pm$0.05}
+        & 88.55$\pm$0.08
+        & 87.87$\pm$0.04
+        & \syfix{86.18$\pm$0.06}
+        & \syadd{\textbf{91.16$\pm$0.04}} \\
+      MSLR-WEB10K
+        & AUC (\%)
+        & \syic{72.60$\pm$0.01}
+        & \syic{72.58$\pm$0.02}
+        & \syic{72.78$\pm$0.03}
+        & \syic{72.88$\pm$0.03}
+        & \syic{72.45$\pm$0.02}
+        & \syic{72.82$\pm$0.02}
+        & \syic{--}
+        & \syic{--}
+        & \syic{72.86$\pm$0.02}
+        & \syic{--}
+        & \syic{70.83$\pm$0.01}
+        & \syic{70.64$\pm$0.02}
+        & \syic{--}
+        & \textbf{73.23$\pm$0.02} \\
+      \midrule
+      Diamonds
+        & RMSE
+        & \syic{0.147$\pm$0.001}
+        & \syic{0.146$\pm$0.003}
+        & \syic{0.144$\pm$0.001}
+        & \syic{0.142$\pm$0.002}
+        & \syic{0.156$\pm$0.002}
+        & \syic{0.143$\pm$0.002}
+        & \syic{0.151$\pm$0.003}
+        & \syic{0.140$\pm$0.002}
+        & \syic{0.143$\pm$0.002}
+        & \syic{0.147$\pm$0.001}
+        & \syic{0.184$\pm$0.003}
+        & \syic{0.197$\pm$0.002}
+        & \syic{0.194$\pm$0.002}
+        & \syic{\textbf{0.127$\pm$0.001}} \\
+      Elevator
+        & RMSE
+        & \syic{0.739$\pm$0.002}
+        & \syic{0.737$\pm$0.003}
+        & \syic{0.734$\pm$0.004}
+        & \syic{0.733$\pm$0.004}
+        & \syic{0.734$\pm$0.001}
+        & \syic{0.731$\pm$0.002}
+        & \syic{0.742$\pm$0.002}
+        & \syic{0.731$\pm$0.002}
+        & \syic{0.729$\pm$0.002}
+        & \syic{0.736$\pm$0.002}
+        & \syic{0.908$\pm$0.003}
+        & \syic{0.916$\pm$0.004}
+        & \syic{0.904$\pm$0.003}
+        & \syic{\textbf{0.722$\pm$0.002}} \\
+      HouseSale
+        & RMSE
+        & \syic{0.173$\pm$0.001}
+        & \syic{0.174$\pm$0.002}
+        & \syic{0.173$\pm$0.002}
+        & \syic{0.172$\pm$0.002}
+        & \syic{0.171$\pm$0.001}
+        & \syic{0.173$\pm$0.001}
+        & \syic{0.177$\pm$0.002}
+        & \syic{0.173$\pm$0.001}
+        & \syic{0.175$\pm$0.002}
+        & \syic{0.176$\pm$0.001}
+        & \syic{0.189$\pm$0.002}
+        & \syic{0.195$\pm$0.001}
+        & \syic{0.180$\pm$0.002}
+        & \syic{\textbf{0.165$\pm$0.001}} \\
+      Crime
+        & RMSE
+        & \syic{0.588$\pm$0.002}
+        & \syic{0.586$\pm$0.002}
+        & \syic{0.566$\pm$0.002}
+        & \syic{0.565$\pm$0.001}
+        & \syic{0.570$\pm$0.002}
+        & \syic{0.560$\pm$0.001}
+        & \syic{0.585$\pm$0.002}
+        & \syic{0.560$\pm$0.001}
+        & \syic{0.561$\pm$0.002}
+        & \syic{0.576$\pm$0.002}
+        & \syic{0.762$\pm$0.002}
+        & \syic{0.951$\pm$0.003}
+        & \syic{0.759$\pm$0.002}
+        & \syic{\textbf{0.557$\pm$0.002}} \\
+      MEPS
+        & RMSE
+        & \syic{0.920$\pm$0.003}
+        & \syic{0.911$\pm$0.002}
+        & \syic{0.903$\pm$0.002}
+        & \syic{0.904$\pm$0.001}
+        & \syic{0.906$\pm$0.002}
+        & \syic{0.897$\pm$0.001}
+        & \syic{0.914$\pm$0.002}
+        & \syic{0.914$\pm$0.002}
+        & \syic{0.922$\pm$0.002}
+        & \syic{0.912$\pm$0.002}
+        & \syic{0.922$\pm$0.002}
+        & \syic{1.024$\pm$0.003}
+        & \syic{0.956$\pm$0.003}
+        & \syic{\textbf{0.889$\pm$0.001}} \\
+      \bottomrule
+    \end{tabular}
+    }
+\end{table*}
+%%% (done) zj-ic3-done: cardiovascular, tabpfn --> 79.14?
+%%% (done) zj-ic3-done: MSLR-WEB10K: baseline 72.96?? --> a bit too high
+
+\section{Experiments}
+
+\subsection{Baselines}
+\vldb{
+\syic{
+\ourmodel{} integrates causal-aware structural knowledge into attention-based deep learning and machine learning architectures, and exploits the learned hierarchical dependency graph to differentiate feature importance. To comprehensively evaluate \ourmodel{}, we compare it against baselines spanning five categories: machine learning, attention-based, graph-based, pre-trained, and causal-based.}
+
+For machine learning methods, we include XGBoost\cite{r:xgboost}, a gradient boosting decision tree model, AutoML\cite{r:automl}, an automated framework for model selection and hyperparameter optimization, \syadd{and TabM\cite{r:tabm}, which incorporates advanced regularization and architecture designs for modern structured data deep learning.} For attention-based methods, we include FT-Transformer\cite{r:ft-transformer}, which employs feature tokenization and row-wise attention, TabTransformer\cite{r:tab}, which applies transformers to encode categorical features, SAINT\cite{r:SAINT}, which introduces both row-wise and column-wise attention, \syadd{and Orion-Bix\cite{r:orionbix}, which leverages bidirectional cross-attention and hierarchical feature interaction learning.} For graph-based methods, we include TabGNN\cite{r:gnnbased}, which constructs a multiplex graph to model sample relationships. \syic{For pre-trained structured data foundation models, we include TabPFN\cite{r:tabpfn}, a zero-shot Transformer trained on synthetic structured data, and XTab\cite{r:xtab}, which leverages cross-table pretraining for structured data transformers.} For causal-based methods, we include CASTLE\cite{r:CASTLE}, which jointly learns causal DAGs and predictions via an MLP backbone, \syic{using the learned graph to constrain input-layer connectivity}, LogCause\cite{r:linear}, which regularizes a linear predictor with statistically extracted causal strengths}\syfix{, and LLM-CD\cite{r:llmcd}, which leverages LLM-derived causal priors for causal graph discovery, \syic{with the discovered structure serving as auxiliary information in a two-stage prediction pipeline.}}
+
+\subsection{Datasets}
+We select \syic{nine} real-world datasets for evaluation, including \syic{four} classification and \syic{five} regression tasks. \syadd{The selected datasets span small, medium, and large features}\syic{, and are split into training (64\%), validation (16\%), and test (20\%) sets.}
+% \syic{The datasets are drawn from three public databases: Kaggle (Cardiovascular, CreditCard, Diamonds, Elevator, and HouseSale), the UCI Machine Learning Repository (Adult and Crime), and the Medical Expenditure Panel Survey (MEPS).}
+% \sydesi{Notably, we incorporate the Crime and MEPS datasets to simulate high-dimensional scenarios, allowing us to assess \ourmodel{}’s effectiveness in environments with a large number of features.}
+% All datasets are publicly available on Kaggle\footnote{\url{https://www.kaggle.com/datasets}} or the UCI Machine Learning Repository\footnote{\url{https://archive.ics.uci.edu/datasets/}}.
+
+\noindent \textbf{CreditCard}: \vldb{This dataset is from a database records credit card transactions. It contains 284,807 samples with 30 numerical features for binary classification of fraudulent transactions.}
+
+\noindent \textbf{Cardiovascular}: \vldb{This dataset is from a clinical database that collects patient health records. It contains 70k samples with 11 categorical features for binary classification of heart disease.}
+
+\noindent \textbf{Adult}: \vldb{This dataset is from the U.S. Census Bureau database, representing a typical public-sector database table. It contains 48,842 samples with 8 categorical and 6 numerical features for binary classification of whether income exceeds \$50K.}
+
+\noindent \textbf{Diamonds}: \vldb{This dataset is from an diamond records diamond transactions. It contains 53,940 samples with 3 categorical and 6 numerical features for regression of diamond price.}
+
+\noindent \textbf{Elevator}: \vldb{This dataset is from an industrial sensor database that monitors elevator operations. It contains 112,001 samples with 7 numerical features for regression of elevator vibration.}
+
+\noindent \textbf{HouseSale}: \vldb{This dataset is from real estate platforms record housing sales in Indian cities. It contains 30,138 samples with 40 categorical features for regression of house sale price.}
+
+\noindent \textbf{Crime}: \vldb{This dataset is from a combined socio-economic, law enforcement, and crime statistics dataset that compiles community crime statistics. It contains 1,994 samples with 122 numerical features for regression of violent crime rate.}
+
+\noindent \textbf{MEPS}: \vldb{This dataset is from a national healthcare survey database tracks medical expenditures and patient demographics. It contains 48,982 samples with 138 mixed demographic and medical features for regression of healthcare utilization.}
+
+\noindent \syic{\textbf{MSLR-WEB10K}: This dataset is from the Microsoft Learning to Rank (LETOR 4.0) collection, which records query-url pairs from a commercial web search engine. It contains 1,200,192 samples with 136 numerical features for binary classification of the relevance of query-url pairs.}
+
+\syadd{\subsection{Hyperparameter Settings}
+\zjic{For deep learning methods}, the hidden size is set to $64$, the batch size is set to $128$, and the learning rate is set to $1\times10^{-4}$. 
+% In all the experiments, 
+The optimizer is Adam with a weight decay of $1\times10^{-5}$, and the number of layers is set to two.
+% for all the deep learning models. 
+The training epochs 
+% for all the datasets and methods 
+are set to $100$ and the dropout rate is set to $0.1$, 
+\syfix{and for transformer-based methods, the per-head dimension is set to the hidden size divided by 4\cite{r:attention}.}
+}
+
+\rlend{\subsection{Configurations and Metrics}}
+
+All methods are implemented using PyTorch 2.2.2 with CUDA 12.2, and the experiments are conducted on a server equipped with an Intel(R) Xeon(R) w7-3455 CPU and two NVIDIA RTX A6000 GPUs.
+\syend{We employ AUROC and RMSE to evaluate the model performance on classification and regression tasks, respectively. }
+
+% In all experiments, the batch size is set to 128. The optimizer \sy{employed} is Adam with a weight decay of $1 \times 10^{-5}$. Other hyperparameters are selected based on the best-performing configuration for each model on each dataset.
+
+\subsection{Comparison on Real World Datasets}
+
+\rln{In this section, we compare \ourmodel{} with \syic{thirteen} baselines across \syic{nine} datasets, and \syic{compare three two-stage baselines separately in Section~\ref{sec:two_stage}}. }
+\icde{Every experiment is repeated 5 times with random seeds, and we report mean performance.}
+As summarized in Table~\ref{tab:model_comparison}, \ourmodel{} consistently outperforms all baselines across both classification and regression tasks.
+
+\rln{
+Traditional machine learning methods (XGBoost and AutoML) perform reasonably on low-dimensional numerical datasets such as CreditCard and Elevator, but show limitations on high-dimensional or mixed-feature datasets (e.g., Crime, MEPS, \syic{and MSLR-WEB10K}), as they do not explicitly model \sydesi{inter-column relationships}.
+\syne{TabM modestly improves over tree-based methods but lags behind attention-based models, underscoring the need for explicit inter-column modeling.} 
+\sytwo{Transformer-based methods (FT-Transformer, Tab-Transformer, \syfix{Orion-Bix,} and SAINT) achieve \syic{strong} performance overall. 
+\syfix{
+Orion-Bix with bi-axial cross-attention shows no clear advantage on these benchmarks because its bidirectional interactions introduce redundant feature dependencies.
+} 
+FT-Transformer, Tab-Transformer and SAINT perform competitively on both classification and regression tasks, benefiting from their strong expressive capacity for modeling inter-column interactions. 
+\syic{Pre-trained structured data foundation models (TabPFN and XTab) achieve the second-best results by benefiting from large-scale pre-training and the ability of generalization.}
+However, these \syic{data-driven} methods rely purely on data-driven correlations without explicit \syic{structural} constraints, which limits further improvement.
+Graph-based methods (TabGNN) explicitly model feature relationships but show \sydesi{limited effectiveness} across most datasets, indicating that \sydesi{data-driven associations are} insufficient without proper structural constraints.}
+\syic{
+Causal-based methods (CASTLE, LogCause and LLM-CD) perform poorly, particularly on high-dimensional datasets such as MEPS. 
+We attribute this to the fact that these methods only treat the learned dependency structure as auxiliary information or use it to constrain the model inputs 
+\zjic{so that the structural guidance is not adaptive and can not well-align with the model structure.}
+}
+%%% (done) zj-ic2-done: "capture complex nonlinear dependencies" ? --> not adaptively and not align well with the model structure?
+\zjic{In Table~\ref{tab:model_comparison}, "\texttt{-{}-}" denotes failure to finish or inapplicability: A few baselines (e.g., TabPFN, Orion-Bix, TabGNN) involve heavy computations across features and thus do not scale to high-dimensional datasets, while LLM-CD additionally needs semantic feature names that MSLR-WEB10K's anonymous features lack.}
+%%% (done) zj-ic3-done: just simply say the overall reason: icl with all features? --> no need to explain every method
+
+\icde{
+In contrast, \ourmodel{} achieves the best results because it integrates \syic{causal-aware} reasoning with high‑capacity attention modeling.}
+The Causal-Attentive Representation Module rectifies spurious associations learned by attention, while the \syic{Target-Relative Hierarchy-Aware Aggregation} exploits the \syic{dependency} hierarchy to \sydesi{differentiate importance of features}, leading to superior performance.
+}
+
+\subsection{\syic{Comparison with Two-Stage Baselines}}\label{sec:two_stage}
+
+\syic{To evaluate learning the dependency structure together with prediction, we compare \ourmodel{} against three two-stage baselines---NOTEARS~\cite{notears}, TANE~\cite{r:tane}, and HyFD~\cite{r:hyfd}---whose dependency graphs are first discovered offline and then frozen as a static structural prior fed into \ourmodel{}'s predictor. 
+Since these offline methods do not scale to high-dimensional datasets, we report the four datasets on which they complete.
+}
+
+\begin{table}[h]
+    \caption{\syic{Comparison with Two-Stage Dependency Discovery Baselines}}
+    \label{tab:two_stage}
+    \centering
+    \footnotesize
+    \setlength{\tabcolsep}{1.7pt}
+    \begin{tabular}{l c c c c c}
+        \toprule
+        Dataset & Metric & NOTEARS & TANE & HyFD & \ourmodel{} \\
+        \midrule
+        Cardio. & AUC $\uparrow$ & 78.43$\pm$0.03 & 77.12$\pm$0.03 & 77.08$\pm$0.01 & \textbf{79.37$\pm$0.02} \\
+        Adult & AUC $\uparrow$ & 87.97$\pm$0.04 & 85.73$\pm$0.04 & 90.03$\pm$0.03 & \textbf{91.16$\pm$0.04} \\
+        Diamonds & RMSE $\downarrow$ & 0.149$\pm$0.003 & 0.154$\pm$0.003 & 0.146$\pm$0.002 & \textbf{0.127$\pm$0.001} \\
+        Elevator & RMSE $\downarrow$ & 0.736$\pm$0.003 & 0.777$\pm$0.003 & 0.769$\pm$0.002 & \textbf{0.722$\pm$0.002} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\syic{As shown in Table~\ref{tab:two_stage}, \ourmodel{} consistently outperforms all three two-stage baselines on the four datasets where they complete. This suggests that learning the dependency structure within \ourmodel{} and incorporating it into the predictor is more effective than feeding frozen structures from offline discovery methods: the latter are discovered without the prediction objective and remain static during training, whereas \ourmodel{} learns the dependency profile end-to-end, letting the structure and the predictor be \syone{jointly optimized}.}
+
+\subsection{Interpretability \syic{and Dependency Profile Analysis}}
+In this section, we demonstrate \ourmodel{}’s interpretability through two representative scenarios. 
+% \syadd{We do not claim that the learned DAGs are guaranteed to recover the true causal graph under strict identifiability conditions on real-world data. Within our framework, the causal graph serves as an auxiliary structure to aid prediction; even when the necessary conditions for causal identifiability are not fully met, the impact on the primary prediction task remains limited.} 
+\zjic{
+% We further interpret the learned dependency structures as column-level dependency profiles of relational tables. 
+Specifically, we examine the learned inter-column dependency graphs and their target-relative hierarchical relationships on the Adult and Diamonds datasets, and assess whether they align with domain knowledge about feature importance.
+} 
+We analyze predictive paths in the DAGs and show the results in Fig.~\ref{fig:interpretability}.
+\rlend{
+On the left side (Adult), the learned DAG shows that \textit{age}, \textit{education-num}, and \textit{relationship} have the strongest influence on income. Moreover, \ourmodel{} captures secondary \syic{dependency} patterns such as \textit{education} influencing \textit{education-num}, and \textit{marital-status} and \textit{sex} determining \textit{relationship}. 
+This hierarchy is sociologically intuitive: higher education leads to more schooling years, which increases earning potential\cite{r:hout2012}.
+On the right side (Diamonds), \textit{clarity} and \textit{carat} emerge as the primary direct \syic{predictors} of \textit{price}, while \textit{length}, \textit{width}, and \textit{height} indirectly influence price through \textit{carat}\cite{r:diamonds}. 
+\ourmodel{} avoids learning spurious relationships such as \textit{sex} directly determining \textit{income} or \textit{length} directly determining \textit{price}.}
+%This demonstrates that \ourmodel{} can uncover causal structures that are robust, interpretable, and consistent with expert understanding of real-world generative mechanisms.
+\syic{This demonstrates that \ourmodel{} can produce dependency structures that are interpretable and consistent with domain knowledge.}
+% \icde{
+% Since there is no numerical groundtruth for \syic{dependency} relationships in the real-world applications like sociology and gemology, we primarily focus on qualitative visualization to present the learned \syic{dependency} structures and compare them with known conclusions from the literature\cite{r:hout2012, r:diamonds}. 
+% %For quantitative evaluation, we will conduct synthetic data experiments in the next section.
+% }
+%%% (done) zj-ic-done: weaken this sentence: "qualitative..."
+
+% \subsection{Synthetic Data Experiments}
+% To evaluate the 
+% %causal discovery capability of \ourmodel{}
+% \syic{quality of the learned dependency structure}, we conduct experiments on synthetic datasets
+% with known causal DAGs~\sydesi{and compare it against causal baselines, i.e., CASTLE\cite{r:CASTLE}, LogCause\cite{r:linear}} and NOTEARS\cite{notears}.
+%, a classic gradient-based causal discovery method.
+
+%We consider two settings: linear Gaussian (consistent with the NPSEM assumption) and nonlinear Gaussian (more realistic, violating the linearity assumption).
+% We first present the linear experiments in detail, followed by the nonlinear experiments.
+
+% \subsubsection{Linear Synthetic Data Experiments}
+
+% We generate synthetic datasets following the NPSEM framework\syend{\cite{r:pearl2009, r:CASTLE}}.
+% Specifically, we first construct a random DAG structure with $n$ nodes representing $n-1$ features and label $y$, where edges denote causal dependencies. Each edge is assigned a random weight sampled from a uniform distribution. Following the topological order of the DAG, we initialize root nodes with random values sampled from $\mathcal{N}(0, 1)$, and then generate each non-root node from its causal parents according to the structural equation $v_i = \sum_{j \in \mathrm{Pa}(v_i)} w_{ji} v_j + \epsilon_i$, where $\epsilon_i \sim \mathcal{N}(0, \sigma^2)$ is independent noise. We generate datasets with 5-node (6 edges) and 10-node (15 edges) DAG structures, and train \ourmodel{} and the baselines on these datasets to assess
+% %their ability to accurately recover the underlying causal graph.
+% \syic{whether the learned dependency structure aligns with the known generating dependencies.}
+
+
+\begin{figure}[t]
+    \centering
+    \subfloat[Adult]{%
+        \includegraphics[width=0.48\linewidth,height=0.8in]{inter1.pdf}%
+        \label{fig:inter1}%
+        % \vspace{-3mm}%
+    }
+    \hspace{0.02\linewidth}
+    \subfloat[Diamonds]{%
+        \includegraphics[width=0.48\linewidth,height=0.8in]{inter2.pdf}%
+        \label{fig:inter2}%
+        % \vspace{-3mm}%
+    }
+    \caption{Interpretability analysis results on two datasets.}
+    \label{fig:interpretability}
+\end{figure}
+
+% We adopt three evaluation metrics: True Positive Rate (TPR), the ratio of correctly identified to all true edges; False Positive Rate (FPR), the ratio of falsely inferred to all non-edges; and RMSE, the root mean squared error for downstream task prediction.
+
+
+% \begin{table}[h]
+%   \caption{Performance Comparison of Causal Structure Discovery on Linear Synthetic Datasets}
+%   % \vspace{-3mm}
+%   \label{tab:synthetic}
+%   \centering
+%   \small
+%   \setlength{\tabcolsep}{3pt}
+%   \begin{tabular}{l ccc ccc}
+%     \toprule
+%     Model
+%     & \multicolumn{3}{c}{5-Node DAG}
+%     & \multicolumn{3}{c}{10-Node DAG} \\
+%     \cmidrule(lr){2-4} \cmidrule(lr){5-7}
+%       & TPR $\uparrow$ & FPR $\downarrow$ & RMSE $\downarrow$
+%       & TPR $\uparrow$ & FPR $\downarrow$ & RMSE $\downarrow$ \\
+%     \midrule
+%     LogCause
+%       & 0.67 & 0.43 & 0.2312
+%       & 0.53 & 0.31 & 0.2156 \\
+%     CASTLE
+%       & 0.67 & 0.36 & 0.2059
+%       & 0.60 & 0.24 & 0.1949 \\
+%     NOTEARS
+%       & \textbf{1.00} & \textbf{0.00} & --
+%       & \textbf{1.00} & \textbf{0.00} & -- \\
+%     \textbf{\ourmodel{} (Ours)}
+%       & 0.83 & 0.21 & \textbf{0.1678}
+%       & 0.80 & 0.19 & \textbf{0.1871} \\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
+% % \vspace{-3mm}
+
+% \syfix{As shown in Table~\ref{tab:synthetic}, NOTEARS achieves near-perfect causal graph recovery (TPR=1.0, FPR=0.0), which is expected since the linear Gaussian data are generated under the NPSEM assumptions for which NOTEARS is designed. 
+% As a pure causal discovery method, however, NOTEARS cannot perform downstream prediction with RMSE marked as ``--''. 
+% More importantly, even a perfectly recovered causal graph does not directly translate to optimal prediction: as we will show in Section~\ref{sec:end_to_end}, feeding NOTEARS' output as the causal mask into \ourmodel{}'s architecture yields substantially worse results than \ourmodel{}'s end-to-end joint learning of causal relationships and downstream task prediction.}
+% %Among the methods that jointly perform causal discovery and prediction, i.e., CASTLE and LogCause, \ourmodel{} consistently achieves higher TPR and lower FPR, indicating more accurate causal discovery, while achieving better RMSE in downstream prediction.
+% \syic{Among the methods that jointly learn dependency structure and predict, i.e., CASTLE and LogCause, \ourmodel{} consistently achieves higher TPR and lower FPR, indicating a dependency structure more consistent with the reference, while achieving better RMSE in downstream prediction.}
+% \sydesi{The simple architectures of CASTLE and LogCause limit their}
+% ability to capture indirect dependencies, leading to false or missing edges.
+% In contrast, \ourmodel{}’s attentive causal masking integrates causal reasoning with the attention mechanism, enabling causal relations to build on inter-column interactions and reinforce one another.
+% \sydesi{
+% % Overall, experimental results validate that \ourmodel{} consistently outperforms all baselines in both causal structure discovery and
+% In terms of downstream prediction
+% % . By achieving higher TPR and lower FPR while maintaining superior accuracy,
+% \ourmodel{} also achieves superior performance than baselines, demonstrating its hierarchy-aware design that effectively identifies the dominant causal structure necessary for reliable prediction.}
+
+% \subsubsection{Nonlinear Synthetic Data Experiments}
+
+%To better reflect real-world scenarios, we further generate a second set of synthetic datasets with \syfix{10-node (15 edges) }DAGs under a nonlinear Gaussian setting.
+% The graph structure and noise distribution remain the same, but each non-root node is generated by a nonlinear function of its parents:
+% $v_i = f_i(Pa(v_i)) + \epsilon_i$, where $\epsilon_i \sim \mathcal{N}(0, \sigma^2)$. Here $f_i$ is a randomly initialized MLP with one hidden layer (32 units, tanh activation). All other parameters (noise variance, graph sparsity, etc.) are kept identical to the linear case.
+% % Results for this nonlinear experiment are shown in Table~\ref{tab:nonlinear}.
+
+% \begin{table}[h]
+%   \caption{Performance Comparison of Causal Structure Discovery on Nonlinear Synthetic Datasets}
+%   % \vspace{-3mm}
+%   \label{tab:nonlinear}
+%   \centering
+%   \small
+%   \setlength{\tabcolsep}{4pt}
+%   \begin{tabular}{l ccc}
+%     \toprule
+%     Model & TPR $\uparrow$ & FPR $\downarrow$ & RMSE $\downarrow$ \\
+%     \midrule
+%      LogCause   & 0.47 & 0.39 & 0.2512 \\
+%      CASTLE     & \syne{0.50} & 0.28 & 0.2186 \\
+%      NOTEARS   & 0.53 & 0.23 & -- \\
+%      \textbf{\ourmodel{} (Ours)} & \textbf{0.73} & \textbf{0.20} & \textbf{0.1836} \\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
+
+% \syfix{As shown in Table~\ref{tab:nonlinear}, all methods degrade under the nonlinear setting compared to their linear counterparts, since the nonlinear parent-child relationships are more challenging to recover. Notably, NOTEARS, which achieved perfect recovery under linear Gaussian data (TPR=1.0, FPR=0.0), suffers the most significant degradation, as its linear SEM assumption no longer holds under the tanh-MLP nonlinear generation process. CASTLE and LogCause also exhibit performance drops, constrained by their simple backbone architectures. In contrast, \ourmodel{} maintains the best TPR and FPR among all methods, demonstrating that its causal-attentive masking generalizes beyond the linear NPSEM assumption to more complex and real nonlinear data generation processes.}
+
+% \subsection{Effectiveness of End-to-end Learning}\label{sec:end_to_end}
+% Integrating causal structure into predictive modeling \syne{can follow} a two-stage approach---first discovering a causal graph via a dedicated algorithm and then feeding it as input to the predictor---or an end-to-end approach that jointly learns the causal structure and the prediction task. \ourmodel{} adopts the latter. To evaluate whether optimization provides benefits, we construct a two-stage baseline by applying NOTEARS\cite{notears}, a gradient-based causal discovery method, to the Adult and Diamonds datasets. The recovered graphs are binarized and used as causal masks $M$ in \ourmodel{}'s architecture. 
+% In contrast, the full \ourmodel{} learns $M$ jointly with the prediction objective.
+
+% \begin{table}[h]
+%   \caption{Performance Comparison Using NOTEARS Graph as Causal Mask}
+%   % \vspace{-3mm}
+%   \label{tab:notears_mask}
+%   \centering
+%   \small
+%   \setlength{\tabcolsep}{2pt}
+%   \begin{tabular}{lcc}
+%     \toprule
+%     Variant & Adult (AUC $\uparrow$) & Diamonds (RMSE $\downarrow$) \\
+%     \midrule
+%     NOTEARS (as causal mask) & 0.8797 & 0.149 \\
+%     \textbf{\ourmodel{} (Ours)} & \syne{\textbf{0.9116}} & \syne{\textbf{0.137}} \\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
+
+% As shown in Table~\ref{tab:notears_mask}, the NOTEARS variant substantially underperforms \ourmodel{} on both datasets. We attribute this gap to two factors. \syfix{First, NOTEARS is designed for causal discovery, not prediction. 
+% As a result, it learns sparse and binary-like causal graphs, which may remove weak edges that contribute useful information for prediction.}
+% Second, learning the causal structure \icde{separately from the downstream task} 
+% yields a static mask that cannot adapt to the prediction signal during training. 
+% In contrast, \ourmodel{}'s end-to-end learning enables mutual reinforcement between causal structure and predictive representations:
+% the reconstruction task guides causal discovery, while the prediction loss retains task-relevant edges that pure causal discovery might suppress.
+% \icde{
+% % Admittedly, NOTEARS may recover causal graphs more accurately, yet its downstream performance is poor. 
+% This confirms \ourmodel{}'s core philosophy of exploiting causal knowledge as an auxiliary for downstream prediction rather than pursuing exact causal discovery, which leads to better predictive performance.
+% }
+
+\subsection{Distribution Shift Experiments}
+
+\sydesi{Since \syic{our causal-inspired dependency modeling} is motivated by robustness under distribution shifts}\kdd{,
+we conduct out-of-distribution experiments on the Diamonds dataset to evaluate whether \ourmodel{} achieves this goal. We consider two representative settings: a feature-level shift and a spurious-correlation reversal scenario inspired by Simpson's Paradox\cite{r:peters2017}.}
+
+\rln{
+For the feature-level shift, we split the training and test sets by the Color feature: diamonds with colors D, E, or F constitute 90\% of the training set, while those with colors G, H, I, or J constitute 90\% of the test set. 
+\rlx{
+For the spurious-correlation reversal scenario, we construct a setting where the correlation between a feature and the target reverses between training and test due to a confounding variable. 
+Specifically, in the Diamonds dataset, both Carat and Clarity have positive \syic{effects} on Price (the target). 
+However, we introduce a confounding pattern by biased sampling: the training set is dominated by samples where Carat and Clarity are negatively associated (small-carat with high-clarity, and large-carat with low-clarity), while the test set is dominated by samples where they are positively associated. 
+Since Carat is a stronger predictor for Price, this creates a spurious negative correlation between Clarity and Price in the training set (Pearson $r$ = -0.42).
+% , which reverses to positive in the test set ($r$ = +0.44). 
+A model that relies on this spurious correlation will fail under this distribution shift. 
+}
+}
+
+\rlend{
+We compare \ourmodel{} with \ourmodel{} w/o Causal, which removes the \syic{causal-aware dependency} components while keeping the same backbone architecture. \ourmodel{} consistently outperforms \ourmodel{} w/o Causal in settings: for the feature-level shift, \ourmodel{} achieves RMSE of 0.198 compared to 0.204 (\ourmodel{} w/o); for the Simpson's Paradox setting, \ourmodel{} achieves 0.223 compared to 0.244 (\ourmodel{} w/o). 
+These results demonstrate that \syic{causal-inspired dependency modeling} improves robustness under distribution shift and avoids spurious correlations}\syfix{, as the acyclic sparse DAG captures \syic{stable conditional dependencies} instead of surface associations.} 
+\rlx{Notably, \ourmodel{}
+%identifies the true positive causal effect from Clarity to
+\syic{still assigns Clarity a positive influence on}
+Price, without being misled by the induced spurious negative correlation in the training set.} 
+
+\subsection{Ablation Study}
+\vldb{In this section, we conduct ablation studies on the Adult and Diamonds datasets to verify the effectiveness of components in \ourmodel{}. By comparing the full model with seven ablation variants, we evaluate the contribution of each module. The results are illustrated in Fig.~\ref{fig:ablation}. Specifically, we design the ablation models: \textbf{\ourmodel{} w/o pred reg} (removing the prediction regularization), \textbf{\ourmodel{} w/o pred weight} (eliminating the adaptive weights $a_i$), \textbf{\ourmodel{} w/o sparse loss} (discarding the sparsity constraint on $M$), \textbf{\ourmodel{} w/o acyclicity loss} (removing the penalty for cycles), \textbf{\ourmodel{} w/o reconstruction loss} (omitting the reconstruction term), \textbf{\ourmodel{} w/o causal mask} (replacing causal-masked self-attention with normal self-attention), \syic{and \textbf{\ourmodel{} w/o structure injection} (removing both causal-masked self-attention and hierarchy-aware aggregation).}
+%%% (done) zj-ic2-done: just explain like "remove both xxx and xxx"?
+}
+
+\rln{
+As shown in Fig.~\ref{fig:ablation}, removing any component from \ourmodel{} results in a noticeable performance drop, confirming the contribution of each module. 
+\rlx{Specifically, removing the reconstruction loss causes the largest degradation, as the causal matrix without proper supervision may misguide the prediction. 
+Removing the adaptive weights leads to significant performance drops, confirming that exploiting \syic{dependency} hierarchy improves performance. }}
+Removing the acyclicity or sparsity constraints also leads to performance degradation, demonstrating their role in ensuring valid and concise \syic{dependency} graph learning. Removing the prediction regularization and causal mask shows consistent drops, indicating that integrating \syic{dependency} structure into column-wise representation and aggregation is necessary. \syic{More importantly, removing both injection paths simultaneously (\ourmodel{} w/o structure injection) degrades performance more than removing either single path alone (w/o causal mask or w/o pred weight), confirming that the two structure injection paths are complementary rather than redundant.}
+Overall, \ourmodel{} achieves the best results when all modules are integrated, demonstrating the effectiveness and complementarity of the proposed design.
+
+\subsection{Effectiveness of Design Choices}
+\sydesi{In this section, we evaluate the effectiveness of three key design choices in \ourmodel{} using the Adult and Diamonds datasets: the causal mask, the predictor aggregation strategy, and \syend{the reconstruction task design}.}
+
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=1.0\columnwidth]{ablation_narrow_bars.pdf}
+    \caption{Ablation study results}
+    \label{fig:ablation}
+    % \vspace{-5mm}
+\end{figure}
+
+\subsubsection{Effectiveness of the Causal Mask}
+\vldb{
+For the learned \syic{dependency} graph \syfix{$M$ (defined in Eq~\ref{eq:masked-attn})} during attention computation, we explore three integration strategies. 
+Let $A \in \mathbb{R}^{(n+1) \times (n+1)}$ denote the raw attention logits (before softmax), and $\text{Attention}$ be the normalized attention weights. 
+\textbf{Multiplicative Masking (Ours)} applies element-wise multiplication between the attention weights and the causal mask as defined in \eqref{eq:masked-attn}. \textbf{Additive Masking} adds the \syic{mask} scores to the normalized attention weights: $\tilde{\text{Attention}}_{i,j} = \text{Attention}_{i,j} + M_{i,j}$. \textbf{Softmax Masking} incorporates the causal mask directly into the softmax computation: $\text{Attention}_{i,j} = \frac{\exp(A_{i,j}) \cdot M_{i,j}}{\sum_k \exp(A_{i,k}) \cdot M_{i,k}}$.
+}
+
+\begin{table}[h]
+    \centering
+    \caption{Comparison of Different Mask Designs}
+    \label{tab:mask_comparison}
+    \footnotesize
+    \setlength{\tabcolsep}{1.7pt}
+    \begin{tabular}{lccc}
+        \toprule
+        Dataset & Ours & Add-Mask & Softmax-Mask \\
+        \midrule
+        adult   &\syne{ \textbf{0.9116}} & \syne{0.9022} & \syne{0.9040} \\
+        diamonds & \syic{\textbf{0.1270}} & \syne{0.1456} & \syne{0.1445} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+%%% (done) zj-ic2-done: for this table, shorten the space between methods, now the table is too wide
+
+\syadd{As shown in Table~\ref{tab:mask_comparison}, multiplicative masking yields the best performance.} \rlend{This is because additive masking distorts the normalized attention distribution, while softmax modification may cause gradient vanishing when $M_{i,j}$ approaches zero. In contrast, multiplicative masking preserves the attention structure while suppressing irrelevant connections, achieving a better balance between interpretability and predictive accuracy.
+}
+
+\subsubsection{Predictor Aggregation Strategy}
+\vldb{
+Given the contextualized representations $H = \{H_1, H_2, \ldots, H_{n+1}\}$ for $n{+}1$ columns ($n$ features and the label $y$), we explore aggregation methods to obtain a unified representation $h_{\text{agg}}$ for prediction. \textbf{Hierarchy-aware Aggregation (Ours)} utilizes learnable weights $\mathbf{a}$ regularized according to the \syic{dependency} hierarchy, as defined in \eqref{eq:distance_regularization}. \syadd{To validate that the distance captures hierarchical feature importance, we compare it against \syic{four} alternatives:}
+\syic{\textbf{Direct-parents} aggregates only the representations of the direct parents of $y$ (nodes with $d_i=1$ in \eqref{eq:distance_matrix}). \textbf{GNN} aggregates via a graph neural network over the binarized conditional dependency DAG $T$, propagating column representations along edges before producing $h_{\text{agg}}$. }
+\textbf{Flattening} concatenates column representations into a single vector: $h_{\text{agg}} = \text{Flatten}(H)$. \textbf{Mean Pooling} aggregates via $h_{\text{agg}} = \frac{1}{n+1}\sum_{i=1}^{n+1} H_i$, treating columns equally.}
+
+\begin{table}[h]
+    \centering
+    \caption{Comparison of Different Predictor Aggregation Strategies}
+    \label{tab:predictor_comparison}
+    \footnotesize
+    \setlength{\tabcolsep}{1.7pt}
+    \begin{tabular}{lccccc}
+        \toprule
+        Dataset & Ours & \syic{Direct-parents} & \syic{GNN} & Flattening & Mean Pooling \\
+        \midrule
+        adult   & \syne{\textbf{0.9116}} & \syic{0.9030} & \syic{0.9084} & \syne{0.9036} & \syne{0.9062} \\
+        diamonds & \syic{\textbf{0.1270}} & \syic{0.1474} & \syic{0.1438} & \syne{0.1457} & \syne{0.1441} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+
+\syadd{As shown in Table~\ref{tab:predictor_comparison}, hierarchy-aware aggregation achieves the most consistent improvement across tasks.} \syic{Direct-parents performs the worst, as hard-restricting the aggregation to direct parents discards informative indirect ancestors. Flattening also underperforms, since concatenating all representations leads to over-parameterization and overfitting.} \rln{Mean pooling shows moderate performance, but treating all columns equally ignores their hierarchical importance in the conditional dependency structure. \syic{GNN aggregation is a strong alternative, as propagating representations along the dependency DAG allows it to exploit graph structure. 
+\zjic{
+However, it exploits the hierarchy only implicitly through message passing.
+% , and its structure is not optimized for prediction.
+}
+%%% (done) zj-ic2-done: GNN: (1) indirectly using the hierarchy (2) the GNN strucuture is not for prediction? --> also the second reason
+% , without explicitly distinguishing attribute importance according to their distances to the target. 
+In contrast, \ourmodel{} designs lightweight distance-regularized weighting to directly encode target-relative hierarchy
+% , avoiding the additional cost of message passing while
+and achieve better prediction performance.} 
+\syic{These results demonstrate the effectiveness of using target-relative dependency distances as structural guidance for representation aggregation.}
+%%% (done) zj-ic2-done: the below is duplicted with the above? need to merge
+}
+
+\subsubsection{Reconstruction Task Design}
+
+\vldb{
+In the \syic{Causal-Inspired Dependency Structure Learning}, a column's own value may leak into its hidden representation through residual connections, enabling trivial self-prediction rather than learning inter-column \syic{dependencies}. To prevent this, we compare two strategies: \textbf{\texttt{MSK} Token-based Reconstruction (Ours)} replaces the \syone{masked} column's embedding with a shared learnable \texttt{[msk]} token at the input layer, forcing the model to reconstruct it solely from the remaining columns. \textbf{Parallel Reconstruction} instead enforces a zero diagonal in the causal mask to block self-attention and removes residual connections.
+}
+
+\begin{table}[h]
+    \centering
+    \caption{Effect of Reconstruction Task Design}
+    \label{tab:reconstruction_comparison}
+    \footnotesize
+    \setlength{\tabcolsep}{1.7pt}
+    \begin{tabular}{lcc}
+        \toprule
+        Dataset & Ours & Parallel Reconstruction \\
+        \midrule
+        adult   & \syne{\textbf{0.9116}} & \syne{0.9065} \\
+        diamonds & \syic{\textbf{0.1270}} & \syne{0.1412} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\syadd{As reported in Table~\ref{tab:reconstruction_comparison}, the \texttt{MSK}-based strategy consistently outperforms parallel reconstruction in both reconstruction accuracy and training stability.} \rlend{Parallel reconstruction removes residual connections to \syend{prevent} leakage, which disrupts gradient flow. In contrast, the \texttt{MSK}-based approach \syend{avoids} self-reference while preserving residual connections, leading to more stable optimization.
+}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=1.0\columnwidth]{training_time_only.pdf} 
+  \caption{Training time comparison.}
+  % \vspace{-5mm}
+  \label{fig:efficiency}
+\end{figure}
+
+% \vspace{-2mm}
+
+\begin{comment}
+\subsection{Complexity Analysis}
+\syic{Model complexity is an important consideration for practical deployment. In this section, we compare \ourmodel{} with the baselines in terms of parameter count. To facilitate the analysis, we denote the number of input features as $n$, the embedding dimension as $d_e$, the number of attention heads as $n_h$, the total number of categories across all categorical columns as $C$, and the total parameters of all feed-forward networks as $n_f$.}
+
+\syic{All methods share a common embedding layer, whose parameter count is $O(C d_e + n d_e)$, accounting for categorical columns (via embedding tables) and numerical columns (via linear projection). Beyond this shared layer, different families introduce additional parameters of different scales. For Transformer-based methods (e.g., FT-Transformer, TabTransformer, SAINT, Orion-Bix), the attention layers and feed-forward networks add $O(n_h d_e^2 + n_f)$ parameters, yielding a total of $O(C d_e + n d_e + n_h d_e^2 + n_f)$. For causal-based methods with MLP backbones (e.g., CASTLE, LogCause, LLM-CD), learning causal dependencies introduces a learnable causal adjacency matrix with up to $O(n^2)$ parameters, leading to a total of $O(C d_e + n d_e + n^2)$. Graph-based methods (e.g.,  TabGNN) similarly introduce an adjacency or edge-weight matrix with $O(n^2)$ parameters, resulting in the same asymptotic total $O(C d_e + n d_e + n^2)$. Tree-based models such as XGBoost have parameter counts linear in the number and depth of trees, but they generally achieve lower predictive performance on the benchmarks in Table~\ref{tab:model_comparison}.}
+
+\syic{\ourmodel{} shares the same embedding layer as Transformer-based baselines, with parameter count $O(C d_e + n d_e)$. On top of this, \ourmodel{} adopts a causal-aware attention block whose attention parameters are $O(n_h d_e^2)$, identical to standard Transformers. Beyond the attention mechanism, \ourmodel{} introduces a learnable causal matrix $C \in \mathbb{R}^{(n+1)\times(n+1)}$ to capture pairwise \syic{dependencies}, contributing $O(n^2)$ parameters, and a \syic{Target-Relative Hierarchy-Aware Aggregation} that assigns learnable aggregation weights to each feature, adding $O(n)$ parameters.}
+
+\syic{The total parameter count of \ourmodel{} is therefore $O(C d_e + n d_e + n_h d_e^2 + n^2 + n)$. The embedding and attention terms are identical to those of Transformer-based methods, and the additional $O(n^2 + n)$ is modest, especially since the number of features $n$ is typically small (often below $10^3$). Hence, \ourmodel{} achieves superior predictive performance and interpretability with negligible additional parameter cost.}
+\end{comment}
+
+\subsection{Efficiency Comparison}
+\syfix{
+In this section, we compare the training efficiency of \ourmodel{} against all \syic{thirteen} baselines spanning the \syic{five} categories. 
+We also include \ourmodel{} w/o Lazy to validate the effect of the lazy update strategy.
+Experiments are conducted on three representative datasets---Elevator (7 features), CreditCard (30 features), and MEPS (138 features)---which span small, medium, and large feature counts, and the results are illustrated in Fig.~\ref{fig:efficiency}.
+}
+
+\syic{
+% For training time, 
+% Among the attention-based baselines, FT-Transformer is relatively slow due to its full self-attention over all tokenized features, while Tab-Transformer is faster as it applies attention only to categorical features. 
+% SAINT incurs \syic{moderate} training time due to its interleaved row-wise and column-wise attention. 
+% Orion-Bix is among the slowest methods due to the heavy bidirectional cross-attention computation. 
+% TabM, as an MLP-based ensemble, exhibits \syic{low} training cost, slower than Tab-Transformer but faster than the heavier attention-based models. 
+% TabGNN incurs substantial overhead due to multiplex graph construction. 
+% Among causal-based methods, LogCause is lightweight, whereas CASTLE's cost is higher due to the matrix exponential computation in its DAG constraint; both require many epochs to converge as the complex optimization landscape slows convergence. 
+% LLM-CD remains relatively efficient in per-epoch training, as its LLM-based reasoning serves as a one-time preprocessing step.} \syic{XTab, the pre-trained cross-table model, is the slowest among all baselines, as its cross-table pretraining requires fine-tuning a large model.
+Among attention-based baselines, FT-Transformer and Orion-Bix are relatively slow due to full self-attention and bidirectional cross-attention, respectively, while Tab-Transformer, TabM, and SAINT incur lower or moderate cost; TabGNN is slow due to multiplex graph construction. Among causal-based methods, CASTLE is costly due to the matrix-exponential DAG constraint, LogCause and LLM-CD are lightweight, and XTab, the pre-trained cross-table model, is the slowest overall due to large-model fine-tuning.
+}
+\syone{In addition, TabPFN incurs its main cost through lengthy pre-training over synthetic data rather than through per-epoch training on the target datasets.
+% , so we exclude it from this per-epoch comparison.
+}
+%%% zj-ic3-done: maybe, no need to show the off-line methods, just simply mention tabPFN
+
+
+\syfix{
+Since XGBoost and AutoML do not have the concept of epochs, we thus compare \ourmodel{} with them in terms of total training time. 
+On Elevator (7 features), \ourmodel{} completes in 340s compared to 160s (XGBoost) and 420s (AutoML). On CreditCard (30 features), \ourmodel{} takes 1450s compared to 1400s (XGBoost) and 1760s (AutoML). On MEPS (138 features), \ourmodel{} takes 964s compared to 990s (XGBoost) and 1170s (AutoML). The results reveal a clear trend: XGBoost is substantially faster on the small-scale dataset, but its advantage rapidly diminishes and even reverses as the feature count increases. 
+This is because tree-based split search does not scale with the number of features\cite{r:xgboost}, whereas \ourmodel{}'s attention-based architecture with lazy update handles high-dimensional feature spaces more gracefully.
+}
+
+
+\syfix{Without the Lazy Update strategy, \ourmodel{}'s training time is high, as the acyclicity loss requires computing the matrix exponential $\operatorname{tr}(e^M)$ (Equation~\eqref{eq:dag-loss}) at every update step. 
+With Lazy Update, \ourmodel{} reduces training time by approximately 35\%--60\% across datasets and achieves comparable efficiency to Tab-Transformer. }
+\syne{Two factors explain this improvement. First, the causal matrix $C$ stabilizes during training: after the first few epochs, the acyclicity and sparsity losses converge to near-zero values and change marginally between consecutive mini-batches, making per-step updates of the \syic{Dependency Structure Learning} largely redundant.}
+\syne{Second, the lazy update strategy reduces update frequency without sacrificing convergence. Unlike prediction, \syic{dependency structure} optimization tolerates sparser updates: DAG constraints and reconstruction loss ensure stability, so even infrequent updates guide the causal matrix to a valid solution. Thus, lowering frequency cuts overhead while preserving correctness and performance.}
+% , as causal structure optimization benefits more from well-converged parameter states than from continuous gradient signals.
+\syfix{Overall, while \ourmodel{} incorporates additional \syone{causal-inspired dependency} modeling, its computational overhead remains comparable to other baseline models.}
+
+\syic{\subsection{Scalability}
+%%% (done) zj-ic-done: active feature ratio?
+To evaluate how \ourmodel{}'s training time scales with the number of features, we select four datasets spanning a broad range of feature counts.
+We additionally include the high-dimensional Crime and MSLR-WEB10K datasets while excluding the low-dimensional Elevator dataset (7 features), whose features are too few to vary meaningfully. 
+We fix the number of samples and vary the ratio of features used from 20\% to 100\%.
+% on four datasets, CreditCard, Crime, MEPS, and MSLR-WEB10K. 
+As shown in Fig.~\ref{fig:scalability}, the per-epoch time grows gradually as the feature fraction increases, exhibiting an approximately linear trend on all four datasets. 
+% for instance, on CreditCard (30 features), the per-epoch time rises from 0.929\,s at 20\% to 1.079\,s at 100\%. 
+This indicates that \ourmodel{} scales gracefully: the lazy-update strategy keeps the costly matrix-exponential acyclicity loss from dominating the per-epoch cost, which is instead dominated by the \zjic{
+column self-attention, which can be computed efficiently.
+}
+}
+%%% (done) zj-ic3-done: not jointly updated? --> not updated every epoch?
+
+\zjic{
+% To understand this near-linear scaling, we analyze \ourmodel{}'s complexity. Its per-epoch computation is dominated by the column-wise self-attention, which costs $O(n^2 d_e)$ per layer, while the acyclicity loss requires computing the matrix exponential $\operatorname{tr}(e^M)$ at $O(n^3)$ cost; the lazy-update strategy evaluates this costly loss only once every $T_c$ mini-batches, 
+%%% zj-ic3-done: just simply explain the above, no need symbols and formulas
+%矩阵乘法中，结果矩阵的每个元素都需要计算一行与一列的内积，涉及n次乘法和约n次加法，因此计算一个元素需要O(n)的时间。由于结果矩阵有n^2个元素，所以总计算量为O(n^3)
+% so attention dominates the per-epoch cost. 
+%%% (done) zj-ic2-done: do we need the below parameter complexity?
+% In terms of parameters, \ourmodel{} shares the embedding and attention layers with Transformer baselines ($O(C d_e + n d_e + n_h d_e^2)$) and only adds the causal matrix $C \in \mathbb{R}^{(n+1)\times(n+1)}$ ($O(n^2)$) and the aggregation weights ($O(n)$). This modest $O(n^2+n)$ overhead is consistent with the near-linear growth observed above.
+}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\columnwidth]{scalability.pdf}
+    \caption{Per-epoch training time versus the number of features.}
+    \label{fig:scalability}
+\end{figure}
+%%% (done) zj-ic1-done: explain Elevator and MSLR
+
+\syadd{\subsection{Hyperparameter Robustness}}
+\syadd{In this section, we investigate the influence of two key hyperparameters: $\alpha$ and $\beta$ defined in \eqref{eq:total_reconstruction_loss}. \syne{Specifically, $\alpha$ balances the reconstruction loss \syone{against the regularization terms, and $\beta$ controls the strength of the structural (acyclicity and sparsity) regularization.}} As shown in Fig.~\ref{fig:sensitive}, for $\alpha$, the performance peaks when $\alpha = 0.1$, indicating a good trade-off. A larger $\alpha$ causes the reconstruction task to dominate and harm predictive accuracy (e.g., $\alpha \geq 1$ leads to notable degradation), while a smaller $\alpha$ weakens the learning of \syic{dependency} structures. For $\beta$, the best performance appears around $\beta = 10^{-3}$; too large a $\beta$ (e.g., $\beta \geq 0.1$) leads to a sharp performance drop due to excessive regularization that limits model flexibility.}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.0\columnwidth]{hyperpa.pdf}
+    \caption{Sensitivity Analysis of Hyperparameters.}
+    \label{fig:sensitive}
+\end{figure}
+
+\section{Conclusion}
+\rlend{
+In this paper, we propose \ourmodel{}, a framework integrating \syic{causal-aware dependency} reasoning with attentive mechanisms for structured data prediction. \ourmodel{} learns a DAG-based \syic{conditional dependency} structure, \syic{a target-conditioned column-level dependency profile}, via a self-supervised reconstruction task, and leverages hierarchy-aware regularization to align feature importance with \syic{dependency} relevance. \syne{A lazy update strategy further reduces training cost.} Experiments demonstrate that \ourmodel{} achieves superior performance and interpretability across real-world \vldb{relational} datasets.
+}
+
+\bibliographystyle{IEEEtran}
+\bibliography{myrefs.bib}
+
+\end{document}

@@ -1,0 +1,695 @@
+{
+  "task": "regression",
+  "columns": [
+    {
+      "name": "feature0",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature1",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature2",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature3",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature4",
+      "type": "NUMERIC"
+    },
+    {
+      "name": "feature5",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature6",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature7",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature8",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature9",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature10",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature11",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature12",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature13",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature14",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature15",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature16",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature17",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature18",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature19",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature20",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature21",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature22",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature23",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature24",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature25",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature26",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature27",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature28",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature29",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature30",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature31",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature32",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature33",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature34",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature35",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature36",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature37",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature38",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature39",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature40",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature41",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature42",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature43",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature44",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature45",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature46",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature47",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature48",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature49",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature50",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature51",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature52",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature53",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature54",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature55",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature56",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature57",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature58",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature59",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature60",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature61",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature62",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature63",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature64",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature65",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature66",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature67",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature68",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature69",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature70",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature71",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature72",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature73",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature74",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature75",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature76",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature77",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature78",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature79",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature80",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature81",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature82",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature83",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature84",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature85",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature86",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature87",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature88",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature89",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature90",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature91",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature92",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature93",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature94",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature95",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature96",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature97",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature98",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature99",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature100",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature101",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature102",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature103",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature104",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature105",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature106",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature107",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature108",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature109",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature110",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature111",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature112",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature113",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature114",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature115",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature116",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature117",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature118",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature119",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature120",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature121",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature122",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature123",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature124",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature125",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature126",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature127",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature128",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature129",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature130",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature131",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature132",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature133",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature134",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature135",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature136",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "feature137",
+      "type": "CATEGORICAL",
+      "cardinality": 2
+    },
+    {
+      "name": "TARGET",
+      "type": "NUMERIC"
+    }
+  ]
+}

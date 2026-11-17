@@ -1,0 +1,22 @@
+{
+  "run_name": "synthetic_demo",
+  "dataset": "synthetic",
+  "random_state": 42,
+  "pc": {
+    "alpha": 0.05,
+    "independence_test": "auto",
+    "sample_size": 200,
+    "ci_threshold": 0.001,
+    "max_uncertain_pairs": 20,
+    "jitter_scale": 0.000001
+  },
+  "llm": {
+    "base_url": "https://api.deepseek.com",
+    "model": "deepseek-v4-flash",
+    "cache_path": null,
+    "sleep_seconds": 0.0
+  },
+  "training": {
+    "predictor": "rf"
+  }
+}

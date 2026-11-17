@@ -1,0 +1,54 @@
+{
+ "task": {
+  "type": "regression",
+  "n_classes": 1,
+  "n_train": 43152,
+  "n_test": 10788,
+  "train_class_counts": []
+ },
+ "node_type_to_int": {
+  "Main_table": 0
+ },
+ "edge_type_to_int": {
+  "SELF": 0,
+  "SIMILARITY_EDGE": 1
+ },
+ "node_types_and_features": {
+  "Main_table": {
+   "INDEX_ID": {
+    "type": "SCALAR"
+   },
+   "feature0": {
+    "type": "SCALAR"
+   },
+   "feature1": {
+    "type": "SCALAR"
+   },
+   "feature2": {
+    "type": "SCALAR"
+   },
+   "feature3": {
+    "type": "SCALAR"
+   },
+   "feature4": {
+    "type": "SCALAR"
+   },
+   "feature5": {
+    "type": "SCALAR"
+   },
+   "feature6": {
+    "type": "SCALAR"
+   },
+   "feature7": {
+    "type": "SCALAR"
+   },
+   "feature8": {
+    "type": "SCALAR"
+   },
+   "TARGET": {
+    "type": "SCALAR"
+   }
+  }
+ },
+ "label_feature": "Main_table.TARGET"
+}
